@@ -12,6 +12,8 @@ export interface SignUpFormData {
 }
 
 export const CENTER_MAX_CAPACITY = 2;
+export const FORWARD_MAX_CAPACITY = 2;
+export const GUARD_MAX_CAPACITY = 1;
 
 export function useSubmitSignUp() {
     const { actor } = useActor();

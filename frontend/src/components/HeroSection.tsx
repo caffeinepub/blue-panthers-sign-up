@@ -1,7 +1,5 @@
 import { MapPin } from 'lucide-react';
-import { CENTER_MAX_CAPACITY } from '../hooks/useQueries';
-
-const POSITION_MAX_CAPACITY = 2;
+import { CENTER_MAX_CAPACITY, FORWARD_MAX_CAPACITY, GUARD_MAX_CAPACITY } from '../hooks/useQueries';
 
 interface HeroSectionProps {
     centerFull?: boolean;
@@ -85,7 +83,7 @@ export default function HeroSection({
                                 </span>
                             ) : (
                                 <span className="font-body text-xs font-semibold text-navy-800/70 uppercase tracking-widest">
-                                    {POSITION_MAX_CAPACITY} Slots Open
+                                    {FORWARD_MAX_CAPACITY} Slots Open
                                 </span>
                             )}
                         </div>
@@ -106,7 +104,7 @@ export default function HeroSection({
                             )}
                         </div>
 
-                        {/* Guard — up to 2 slots */}
+                        {/* Guard — up to 1 slot */}
                         <div className={`flex items-center gap-2 ${guardFull ? 'opacity-60' : ''}`}>
                             <span className={`font-display text-xl font-black text-navy-900 leading-none ${guardFull ? 'line-through decoration-navy-900/60' : ''}`}>
                                 Guard
@@ -117,7 +115,7 @@ export default function HeroSection({
                                 </span>
                             ) : (
                                 <span className="font-body text-xs font-semibold text-navy-800/70 uppercase tracking-widest">
-                                    {POSITION_MAX_CAPACITY} Slots Open
+                                    {GUARD_MAX_CAPACITY} Slot Open
                                 </span>
                             )}
                         </div>

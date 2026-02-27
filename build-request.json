@@ -1,52 +1,71 @@
 {
   "kind": "build_request",
-  "title": "Set all positions to 2 open slots",
-  "projectName": "Blue Panthers Sign-Up",
+  "title": "Change Guard position to 1 open slot",
   "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Update the backend capacity enforcement so that each basketball position (Forward, Center, Guard) has a maximum of 2 slots instead of the current cap of 5.",
+      "text": "Update the Guard position maximum capacity to 1 in the backend. The sign-up validation logic currently uses a max capacity of 2 for all positions; change the Guard position's max capacity to 1.",
       "target": "backend",
       "source": {
         "messageIds": [
-          "msg-4"
+          "msg-6"
         ],
         "quotes": [
-          "Make it so all positions have two slots open."
+          "Change the guard Position to one slot open."
         ]
       },
       "acceptanceCriteria": [
-        "The backend rejects sign-ups for any position once 2 players have already registered for that position.",
-        "Sign-ups for a position with fewer than 2 registered players are accepted normally.",
-        "All three positions (Forward, Center, Guard) share the same cap of 2."
+        "The Guard position accepts at most 1 sign-up; a second Guard sign-up attempt returns a capacity error.",
+        "Forward and Center positions remain unaffected with a max capacity of 2."
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Update the HeroSection stats bar to display '2 slots' (instead of '5 slots') for each position (Forward, Center, Guard).",
+      "text": "Update the HeroSection stats bar in HeroSection.tsx to reflect the Guard position's new max capacity of 1. The stats bar should display '1 Slot Open' (singular) for Guard when no one has signed up, and 'Full' when the slot is taken. Forward and Center continue to show '2 Slots Open' or 'Full' as before.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-4"
+          "msg-6"
         ],
         "quotes": [
-          "Make it so all positions have two slots open."
+          "Change the guard Position to one slot open."
         ]
       },
       "acceptanceCriteria": [
-        "The stats bar in HeroSection shows '2 slots' for Forward, Center, and Guard.",
-        "The displayed slot count reflects the updated capacity of 2."
+        "HeroSection displays '1 Slot Open' for Guard when 0 players have signed up for that position.",
+        "HeroSection displays 'Full' for Guard when 1 player has signed up.",
+        "Forward and Center slots continue to display based on a max of 2 slots."
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "text": "Generate a migration module (backend/migration.mo) that sets the Guard position max capacity to 1 and keeps Forward and Center at 2 during canister upgrade.",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-6"
+        ],
+        "quotes": [
+          "Change the guard Position to one slot open."
+        ]
+      },
+      "acceptanceCriteria": [
+        "After upgrade, Guard capacity is persisted as 1.",
+        "After upgrade, Forward and Center capacities remain at 2.",
+        "Existing sign-up data is preserved without loss."
       ]
     }
   ],
   "constraints": [
-    "Do not change the league name ('League. maine') anywhere in the app.",
-    "Apply the capacity change uniformly to all three positions — Forward, Center, and Guard."
+    "Do not change the Forward or Center position capacities — they remain at 2.",
+    "All Motoko logic must remain in the single main actor (backend/main.mo).",
+    "Do not edit any files under frontend/src/hooks/ or frontend/src/components/ui."
   ],
   "nonGoals": [
-    "Adding per-position configurable slot counts via an admin UI.",
-    "Any changes to the sign-up form fields or player data model."
+    "Changing the maximum capacity of Forward or Center positions.",
+    "Adding new positions or restructuring the position model.",
+    "Resetting or deleting existing sign-up data."
   ],
   "imageRequirements": {
     "required": [],

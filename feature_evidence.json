@@ -2,8 +2,8 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-update-the-herosection-stats-bar-to-display-2-slots-instead-of-5-slots-for-each-position-forward-center-guard",
-      "featureTitle": "Update the HeroSection stats bar to display '2 slots' (instead of '5 slots') for each position (Forward, Center, Guard).",
+      "featureId": "feature-update-the-herosection-stats-bar-in-herosection-tsx-to-reflect-the-guard-position-s-new-max-capacity-of-1-the-stats-bar-should-display-1-slot-open-singular-for-guard-when-no-one-has-signed-up-and-full-when-the-slot-is-taken-forward-and-center-continue-to-show-2-slots-open-or-full-as-before",
+      "featureTitle": "Update the HeroSection stats bar in HeroSection.tsx to reflect the Guard position's new max capacity of 1. The stats bar should display '1 Slot Open' (singular) for Guard when no one has signed up, and 'Full' when the slot is taken. Forward and Center continue to show '2 Slots Open' or 'Full' as before.",
       "files": [
         "frontend/src/components/HeroSection.tsx"
       ],

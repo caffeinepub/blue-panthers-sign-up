@@ -7,7 +7,6 @@ import Time "mo:core/Time";
 import Principal "mo:core/Principal";
 import Iter "mo:core/Iter";
 import MixinAuthorization "authorization/MixinAuthorization";
-
 import AccessControl "authorization/access-control";
 import Migration "migration";
 
@@ -57,11 +56,11 @@ actor {
     #maxCapacity : Nat; // 0 means explicitly closed
   };
 
-  // New configuration: All positions have a max capacity of 2.
+  // Corrected configuration with max capacity 1 for guard, 2 for others.
   let positionConfig : [(Position, PositionStatus)] = [
     (#forward, #maxCapacity(2)),
     (#center, #maxCapacity(2)),
-    (#guard, #maxCapacity(2)),
+    (#guard, #maxCapacity(1)), // Updated max capacity for guard
   ];
 
   public type SignUp = {

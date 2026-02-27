@@ -1,20 +1,21 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Set all positions to 2 open slots",
+  "title": "Change Guard position to 1 open slot",
   "requirements": [
     {
       "id": "REQ-2",
-      "summary": "Update the HeroSection stats bar to display '2 slots' for each position instead of '5 slots'",
+      "summary": "Update the HeroSection stats bar to reflect the Guard position's new max capacity of 1",
       "acceptanceCriteria": [
-        "The stats bar in HeroSection shows '2 slots' for Forward, Center, and Guard.",
-        "The displayed slot count reflects the updated capacity of 2."
+        "HeroSection displays '1 Slot Open' for Guard when 0 players have signed up for that position.",
+        "HeroSection displays 'Full' for Guard when 1 player has signed up.",
+        "Forward and Center slots continue to display based on a max of 2 slots."
       ],
       "file_operations": [
         {
           "path": "frontend/src/components/HeroSection.tsx",
           "operation": "modify",
-          "description": "Update the stats bar to display '2 slots' instead of '5 slots' for each position (Forward, Center, Guard). Change the hardcoded slot counts in the stats display to reflect the new maximum capacity of 2 slots per position."
+          "description": "Update the stats bar logic to use a max capacity of 1 for the Guard position. Modify the slot availability calculation so that Guard displays '1 Slot Open' (singular) when 0 players have signed up and 'Full' when 1 player has signed up. Keep Forward and Center using max capacity of 2, displaying '2 Slots Open' or 'Full' as before. The component currently uses a hardcoded max of 2 for all positions; add position-specific capacity logic."
         }
       ]
     }

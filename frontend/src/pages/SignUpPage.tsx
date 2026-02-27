@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { CheckCircle, Loader2, AlertCircle, User, Mail, Phone, Calendar, Trophy } from 'lucide-react';
 import { Position, ExperienceLevel } from '../backend';
-import { useSubmitSignUp, CENTER_MAX_CAPACITY, type SignUpFormData } from '../hooks/useQueries';
+import { useSubmitSignUp, CENTER_MAX_CAPACITY, FORWARD_MAX_CAPACITY, GUARD_MAX_CAPACITY, type SignUpFormData } from '../hooks/useQueries';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -22,8 +22,6 @@ const EXPERIENCE_LEVELS = [
     { value: ExperienceLevel.intermediate, label: 'Intermediate' },
     { value: ExperienceLevel.advanced, label: 'Advanced' },
 ];
-
-const POSITION_MAX_CAPACITY = 2;
 
 interface FormValues {
     name: string;
@@ -104,10 +102,10 @@ export default function SignUpPage() {
         if (msg.toLowerCase().includes('maximum capacity') || msg.toLowerCase().includes('maxcapacity')) {
             const pos = watchPosition;
             if (pos === Position.forward) {
-                return `The Forward position is now full (${POSITION_MAX_CAPACITY}/${POSITION_MAX_CAPACITY} slots taken). Please check back later.`;
+                return `The Forward position is now full (${FORWARD_MAX_CAPACITY}/${FORWARD_MAX_CAPACITY} slots taken). Please check back later.`;
             }
             if (pos === Position.guard) {
-                return `The Guard position is now full (${POSITION_MAX_CAPACITY}/${POSITION_MAX_CAPACITY} slots taken). Please check back later.`;
+                return `The Guard position is now full (${GUARD_MAX_CAPACITY}/${GUARD_MAX_CAPACITY} slot taken). Please check back later.`;
             }
             return `The Center position is now full (${CENTER_MAX_CAPACITY}/${CENTER_MAX_CAPACITY} slots taken). Please check back later.`;
         }
@@ -314,7 +312,7 @@ export default function SignUpPage() {
                                                                 </Badge>
                                                             ) : (
                                                                 <Badge variant="outline" className="text-[10px] px-1 py-0 border-gold-500/40 text-gold-500 ml-1">
-                                                                    {POSITION_MAX_CAPACITY} slots
+                                                                    {GUARD_MAX_CAPACITY} slot
                                                                 </Badge>
                                                             )}
                                                         </span>
@@ -334,7 +332,7 @@ export default function SignUpPage() {
                                                                 </Badge>
                                                             ) : (
                                                                 <Badge variant="outline" className="text-[10px] px-1 py-0 border-gold-500/40 text-gold-500 ml-1">
-                                                                    {POSITION_MAX_CAPACITY} slots
+                                                                    {FORWARD_MAX_CAPACITY} slots
                                                                 </Badge>
                                                             )}
                                                         </span>
@@ -362,10 +360,11 @@ export default function SignUpPage() {
                                                 </SelectContent>
                                             </Select>
                                             {errors.position && <FieldError message="Please select a position" />}
+                                            {/* Inline warning if selected position is full */}
                                             {isSelectedPositionFull && (
                                                 <p className="text-xs text-destructive font-body flex items-center gap-1 mt-1">
                                                     <AlertCircle className="h-3 w-3 shrink-0" />
-                                                    This position is full. Please select a different position.
+                                                    This position is currently full. Please select another position.
                                                 </p>
                                             )}
                                         </div>
@@ -392,12 +391,12 @@ export default function SignUpPage() {
                                                     ))}
                                                 </SelectContent>
                                             </Select>
-                                            {errors.experienceLevel && <FieldError message="Please select an experience level" />}
+                                            {errors.experienceLevel && <FieldError message="Please select your experience level" />}
                                         </div>
 
                                         {/* Submit Error */}
                                         {submitErrorMessage && (
-                                            <div className="flex items-start gap-2 p-3 rounded bg-destructive/10 border border-destructive/20">
+                                            <div className="flex items-start gap-2 p-3 rounded bg-destructive/10 border border-destructive/30">
                                                 <AlertCircle className="h-4 w-4 text-destructive shrink-0 mt-0.5" />
                                                 <p className="font-body text-sm text-destructive">{submitErrorMessage}</p>
                                             </div>
@@ -407,7 +406,7 @@ export default function SignUpPage() {
                                         <Button
                                             type="submit"
                                             disabled={submitSignUp.isPending || isSelectedPositionFull}
-                                            className="w-full bg-gold-500 hover:bg-gold-400 text-navy-900 font-display font-black text-base tracking-widest uppercase py-6 shadow-gold disabled:opacity-50"
+                                            className="w-full bg-gold-500 hover:bg-gold-400 text-navy-900 font-display font-black text-base tracking-widest uppercase py-6 disabled:opacity-50"
                                         >
                                             {submitSignUp.isPending ? (
                                                 <>
