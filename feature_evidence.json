@@ -1,0 +1,63 @@
+{
+  "kind": "feature_evidence_report",
+  "features": [
+    {
+      "featureId": "feature-add-a-react-query-hook-in-usequeries-ts-to-fetch-all-sign-ups-from-the-backend-using-the-new-getallsignups-query-function",
+      "featureTitle": "Add a React Query hook in useQueries.ts to fetch all sign-ups from the backend using the new getAllSignUps query function.",
+      "files": [
+        "frontend/src/hooks/useQueries.ts"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0"
+      ],
+      "testIds": [
+        "REQ-2"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-create-an-owner-dashboard-page-frontend-src-pages-ownerdashboard-tsx-that-requires-internet-identity-login-to-access-once-authenticated-display-a-table-of-all-sign-ups-showing-each-player-s-name-email-phone-age-position-and-experience-level-if-not-logged-in-show-a-login-prompt-with-an-internet-identity-sign-in-button-style-the-page-consistently-with-the-existing-navy-and-gold-blue-panthers-design-system",
+      "featureTitle": "Create an Owner Dashboard page (frontend/src/pages/OwnerDashboard.tsx) that requires Internet Identity login to access. Once authenticated, display a table of all sign-ups showing each player's name, email, phone, age, position, and experience level. If not logged in, show a login prompt with an Internet Identity sign-in button. Style the page consistently with the existing navy and gold Blue Panthers design system.",
+      "files": [
+        "frontend/src/pages/OwnerDashboard.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0"
+      ],
+      "testIds": [
+        "REQ-3"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-a-navigation-link-or-route-in-app-tsx-so-the-owner-dashboard-page-is-reachable-e-g-via-a-discreet-owner-login-link-in-the-footer-or-header",
+      "featureTitle": "Add a navigation link or route in App.tsx so the Owner Dashboard page is reachable (e.g., via a discreet 'Owner Login' link in the footer or header).",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/components/Layout.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0"
+      ],
+      "testIds": [
+        "REQ-4"
+      ],
+      "confidence": "high"
+    }
+  ]
+}

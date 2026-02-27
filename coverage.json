@@ -1,0 +1,81 @@
+{
+  "kind": "coverage_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-27T12:51:12.464Z",
+  "sources": {
+    "buildRequest": true,
+    "implementationPlan": true
+  },
+  "requirements": {
+    "total": 4,
+    "implemented": 3,
+    "items": [
+      {
+        "id": "REQ-1",
+        "summary": "Add a backend query function that returns all sign-up records stored in the map, including each player's ID, name, email, phone, age, position, and experience level.",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
+      },
+      {
+        "id": "REQ-2",
+        "summary": "Add a React Query hook in useQueries.ts to fetch all sign-ups from the backend using the new getAllSignUps query function.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/hooks/useQueries.ts"
+        ],
+        "matchedFiles": [
+          "frontend/src/hooks/useQueries.ts"
+        ]
+      },
+      {
+        "id": "REQ-3",
+        "summary": "Create an Owner Dashboard page (frontend/src/pages/OwnerDashboard.tsx) that requires Internet Identity login to access. Once authenticated, display a table of all sign-ups showing each player's name, email, phone, age, position, and experience level. If not logged in, show a login prompt with an Internet Identity sign-in button. Style the page consistently with the existing navy and gold Blue Panthers design system.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/pages/OwnerDashboard.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/pages/OwnerDashboard.tsx"
+        ]
+      },
+      {
+        "id": "REQ-4",
+        "summary": "Add a navigation link or route in App.tsx so the Owner Dashboard page is reachable (e.g., via a discreet 'Owner Login' link in the footer or header).",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/App.tsx",
+          "frontend/src/components/Layout.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/App.tsx",
+          "frontend/src/components/Layout.tsx"
+        ]
+      }
+    ]
+  },
+  "changedFiles": [
+    "backend/authorization/MixinAuthorization.mo",
+    "backend/authorization/access-control.mo",
+    "backend/main.mo",
+    "build-request.json",
+    "caffeine.lock.json",
+    "feature_evidence.json",
+    "frontend-file-summaries.txt",
+    "frontend-implementation-plan.json",
+    "frontend/src/App.tsx",
+    "frontend/src/backend.d.ts",
+    "frontend/src/backend.ts",
+    "frontend/src/components/Layout.tsx",
+    "frontend/src/declarations/backend.did.d.ts",
+    "frontend/src/declarations/backend.did.js",
+    "frontend/src/hooks/useActor.ts",
+    "frontend/src/hooks/useQueries.ts",
+    "frontend/src/pages/OwnerDashboard.tsx",
+    "frontend/src/utils/urlParams.ts",
+    "project_state.json",
+    "scratch/component-selection.json",
+    "spec.md",
+    "spec_vs_diff_report.json"
+  ]
+}

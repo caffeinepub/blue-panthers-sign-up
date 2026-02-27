@@ -1,0 +1,10 @@
+{
+  "frontend/src/index.css": "Global styles with deep navy and gold OKLCH color palette, Barlow Condensed display font and Barlow body font for a bold athletic sports-team aesthetic, applied to both light and dark modes.",
+  "frontend/tailwind.config.js": "Extended Tailwind config with custom navy and gold color scales, Barlow font families, gold glow box shadows, and fade-in-up animation keyframes for the sports theme.",
+  "frontend/src/hooks/useQueries.ts": "Custom React Query hooks for backend interactions — includes `useSubmitSignUp` mutation for player registration and a new `useGetAllSignUps` query hook that fetches all sign-up records from the backend (admin-only).",
+  "frontend/src/components/Layout.tsx": "Full-page layout wrapper with sticky navy header, main content area, and branded footer; now includes a subtle dot link (`·`) at the bottom of the footer that navigates to the `/owner` dashboard without distracting public visitors.",
+  "frontend/src/components/HeroSection.tsx": "Hero banner section with overlay gradients, animated Blue Panthers headline, tagline, a gold \"Jackman, Maine 04945\" location line with a MapPin icon, and a gold stats bar.",
+  "frontend/src/pages/SignUpPage.tsx": "Main sign-up page with react-hook-form validation, all required player fields (name, email, phone, age, position, experience), loading/error/success states, and a \"Why Join\" feature section.",
+  "frontend/src/App.tsx": "Root app component using TanStack Router with two routes — `/` renders `SignUpPage` inside `Layout`, and `/owner` renders the standalone `OwnerDashboard` page.",
+  "frontend/src/pages/OwnerDashboard.tsx": "Owner-only admin dashboard page at `/owner` that gates access behind Internet Identity login; authenticated users see a full table of all player sign-ups (name, email, phone, age, position, experience level) with loading skeletons, empty state, error handling for unauthorized access, and a refresh button."
+}

@@ -1,0 +1,57 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 3,
+  "summary": "A web app for the Blue Panthers sports team (based in Jackman, Maine) with sign-up functionality and an owner/admin dashboard to view sign-ups.",
+  "architectural_notes": [
+    "App includes a sign-up flow for Blue Panthers team members",
+    "Owner/admin dashboard page required to display sign-up list"
+  ],
+  "known_issues": [],
+  "isFixRequest": false,
+  "existing_features": [
+    {
+      "id": "feature-add-a-react-query-hook-in-usequeries-ts-to-fetch-all-sign-ups-from-the-backend-using-the-new-getallsignups-query-function",
+      "title": "Add a React Query hook in useQueries.ts to fetch all sign-ups from the backend using the new getAllSignUps query function.",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-an-owner-dashboard-page-frontend-src-pages-ownerdashboard-tsx-that-requires-internet-identity-login-to-access-once-authenticated-display-a-table-of-all-sign-ups-showing-each-player-s-name-email-phone-age-position-and-experience-level-if-not-logged-in-show-a-login-prompt-with-an-internet-identity-sign-in-button-style-the-page-consistently-with-the-existing-navy-and-gold-blue-panthers-design-system",
+      "title": "Create an Owner Dashboard page (frontend/src/pages/OwnerDashboard.tsx) that requires Internet Identity login to access. Once authenticated, display a table of all sign-ups showing each player's name, email, phone, age, position, and experience level. If not logged in, show a login prompt with an Internet Identity sign-in button. Style the page consistently with the existing navy and gold Blue Panthers design system.",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-navigation-link-or-route-in-app-tsx-so-the-owner-dashboard-page-is-reachable-e-g-via-a-discreet-owner-login-link-in-the-footer-or-header",
+      "title": "Add a navigation link or route in App.tsx so the Owner Dashboard page is reachable (e.g., via a discreet 'Owner Login' link in the footer or header).",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "Owner/admin page to view all users who signed up for the Blue Panthers",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "Add a backend query function that returns all sign-up records stored in the map, including each player's ID, name, email, phone, age, position, and experience level.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "status": "pending"
+    }
+  ],
+  "gameProjectType": "none",
+  "projectName": "Blue Panthers",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}

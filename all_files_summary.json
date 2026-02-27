@@ -1,0 +1,20 @@
+{
+  "backend/main.mo": "Main Motoko actor defining user profile management and player sign-up functionality with role-based access control (admin/user permissions) using Internet Identity principals.",
+  "feature_evidence.json": "Feature evidence report mapping three implemented features (useGetAllSignUps hook, OwnerDashboard page, and owner navigation route) to their corresponding files, components, and test IDs.",
+  "frontend-file-summaries.txt": "JSON document containing short summaries of each frontend source file, describing their purpose within the Blue Panthers basketball sign-up application.",
+  "frontend/index.css": "Base Tailwind CSS file defining OKLCH CSS custom properties for light and dark color themes used by shadcn-ui components throughout the app.",
+  "frontend/index.html": "HTML entry point for the Blue Panthers Sign-Up React app, mounting the app into a root div and loading the main TypeScript module.",
+  "frontend/src/App.tsx": "Root React component that sets up TanStack Router with two routes: `/` for the public SignUpPage inside Layout, and `/owner` for the standalone OwnerDashboard.",
+  "frontend/src/components/HeroSection.tsx": "Hero banner component displaying the Blue Panthers branding with an overlay image, animated headline, location info, and a gold stats bar showing season/league/positions.",
+  "frontend/src/components/Layout.tsx": "Full-page layout wrapper with a sticky navy header featuring the team logo, a main content area, and a branded footer with a subtle dot link navigating to the `/owner` dashboard.",
+  "frontend/src/hooks/useActor.ts": "Custom hook that creates and caches an authenticated or anonymous ICP backend actor using React Query, reinitializing and invalidating dependent queries when the Internet Identity changes.",
+  "frontend/src/hooks/useInternetIdentity.ts": "Provides a React context and hook for Internet Identity authentication, managing login/logout state and persisting identity via AuthClient.",
+  "frontend/src/hooks/useQueries.ts": "Defines React Query hooks for submitting a player sign-up form and fetching all sign-ups from the backend actor.",
+  "frontend/src/index.css": "Global CSS file that imports Barlow fonts, sets up Tailwind directives, and defines a deep navy/gold CSS custom property theme for light and dark modes.",
+  "frontend/src/main.tsx": "Application entry point that renders the React app wrapped in QueryClientProvider and InternetIdentityProvider.",
+  "frontend/src/pages/OwnerDashboard.tsx": "Owner-only dashboard page that displays a table of all player sign-ups with login/logout controls and loading/error states.",
+  "frontend/src/pages/SignUpPage.tsx": "Public player registration page with a form for submitting name, contact info, position, and experience level, showing a success card on completion.",
+  "frontend/src/utils/urlParams.ts": "Utility functions for reading, storing, and clearing URL parameters from both query strings and hash-based routes, with sessionStorage persistence support.",
+  "frontend/tailwind.config.js": "Tailwind CSS configuration for the Blue Panthers frontend, defining dark mode, custom fonts (Barlow/Barlow Condensed), and an extended color palette using oklch values including navy, gold, and semantic UI colors.",
+  "project_state.json": "Project state tracking file for the Blue Panthers web app, recording existing features (React Query hooks, Owner Dashboard page, navigation routes) and pending feature requests (backend query for all sign-ups, admin dashboard)."
+}
