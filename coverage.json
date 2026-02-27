@@ -1,29 +1,25 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-27T12:58:07.181Z",
+  "generatedAt": "2026-02-27T22:52:28.671Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
     "total": 2,
-    "implemented": 2,
+    "implemented": 1,
     "items": [
       {
         "id": "REQ-1",
-        "summary": "On the public sign-up page (SignUpPage.tsx), mark the 'Guard' position as unavailable: disable the Guard option in the position selector, display a visible 'Not Available' label or badge next to it, and prevent users from submitting the form with Guard selected.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/pages/SignUpPage.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/pages/SignUpPage.tsx"
-        ]
+        "summary": "Update the backend capacity enforcement so that each basketball position (Forward, Center, Guard) has a maximum of 2 slots instead of the current cap of 5.",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
       },
       {
         "id": "REQ-2",
-        "summary": "Update the HeroSection stats bar (HeroSection.tsx) to reflect that the Guard position is currently unavailable, so that the public-facing branding is consistent with the sign-up form restriction.",
+        "summary": "Update the HeroSection stats bar to display '2 slots' (instead of '5 slots') for each position (Forward, Center, Guard).",
         "status": "implemented",
         "plannedFiles": [
           "frontend/src/components/HeroSection.tsx"
@@ -35,11 +31,14 @@
     ]
   },
   "changedFiles": [
+    "backend/main.mo",
+    "backend/migration.mo",
     "build-request.json",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
     "frontend/src/components/HeroSection.tsx",
+    "frontend/src/hooks/useQueries.ts",
     "frontend/src/pages/SignUpPage.tsx",
     "project_state.json",
     "scratch/component-selection.json",

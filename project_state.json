@@ -1,22 +1,14 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "Website project where a guard's availability status needs to be displayed as unavailable.",
+  "summary": "Fantasy sports league app with position slot management. League is named 'League. Maine'.",
   "architectural_notes": [],
   "known_issues": [],
   "isFixRequest": false,
   "existing_features": [
     {
-      "id": "feature-on-the-public-sign-up-page-signuppage-tsx-mark-the-guard-position-as-unavailable-disable-the-guard-option-in-the-position-selector-display-a-visible-not-available-label-or-badge-next-to-it-and-prevent-users-from-submitting-the-form-with-guard-selected",
-      "title": "On the public sign-up page (SignUpPage.tsx), mark the 'Guard' position as unavailable: disable the Guard option in the position selector, display a visible 'Not Available' label or badge next to it, and prevent users from submitting the form with Guard selected.",
-      "reqIds": [
-        "REQ-1"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-update-the-herosection-stats-bar-herosection-tsx-to-reflect-that-the-guard-position-is-currently-unavailable-so-that-the-public-facing-branding-is-consistent-with-the-sign-up-form-restriction",
-      "title": "Update the HeroSection stats bar (HeroSection.tsx) to reflect that the Guard position is currently unavailable, so that the public-facing branding is consistent with the sign-up form restriction.",
+      "id": "feature-update-the-herosection-stats-bar-to-display-2-slots-instead-of-5-slots-for-each-position-forward-center-guard",
+      "title": "Update the HeroSection stats bar to display '2 slots' (instead of '5 slots') for each position (Forward, Center, Guard).",
       "reqIds": [
         "REQ-2"
       ],
@@ -26,8 +18,16 @@
   "new_feature_requests": [
     {
       "id": "AR-1",
-      "summary": "Display guard as not available on the website",
+      "summary": "All positions should have two slots open",
       "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "Update the backend capacity enforcement so that each basketball position (Forward, Center, Guard) has a maximum of 2 slots instead of the current cap of 5.",
+      "reqIds": [
+        "REQ-1"
+      ],
       "status": "pending"
     }
   ],

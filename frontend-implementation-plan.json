@@ -1,37 +1,20 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Display Guard position as not available on the sign-up page",
+  "title": "Set all positions to 2 open slots",
   "requirements": [
     {
-      "id": "REQ-1",
-      "summary": "Mark the Guard position as unavailable on the public sign-up page: disable the Guard option in the position selector, display a 'Not Available' label or badge, and prevent form submission with Guard selected.",
-      "acceptanceCriteria": [
-        "The Guard option in the position dropdown/selector is visually marked as 'Not Available' (e.g., greyed out with a badge or label).",
-        "The Guard option is disabled and cannot be selected by the user.",
-        "If a user somehow has Guard selected, form submission is blocked with a clear message indicating the position is unavailable.",
-        "All other positions remain selectable and unaffected."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/pages/SignUpPage.tsx",
-          "operation": "modify",
-          "description": "Update the position selector to mark the Guard position as unavailable: add a disabled state for the Guard option, display a 'Not Available' badge or label next to it, style it with reduced opacity or grey color, and add form validation that blocks submission if Guard is somehow selected with a clear error message. Ensure Center and Forward positions remain fully selectable."
-        }
-      ]
-    },
-    {
       "id": "REQ-2",
-      "summary": "Update the HeroSection stats bar to reflect that the Guard position is currently unavailable, maintaining consistency with the sign-up form restriction.",
+      "summary": "Update the HeroSection stats bar to display '2 slots' for each position instead of '5 slots'",
       "acceptanceCriteria": [
-        "The stats bar or positions display in the hero section shows Guard as 'Unavailable' or 'Closed'.",
-        "Other open positions are still shown as available."
+        "The stats bar in HeroSection shows '2 slots' for Forward, Center, and Guard.",
+        "The displayed slot count reflects the updated capacity of 2."
       ],
       "file_operations": [
         {
           "path": "frontend/src/components/HeroSection.tsx",
           "operation": "modify",
-          "description": "Update the gold stats bar that displays positions to show the Guard position as 'Unavailable' or 'Closed' while maintaining the display of Center and Forward as available open positions. Ensure the visual styling clearly differentiates unavailable positions from available ones."
+          "description": "Update the stats bar to display '2 slots' instead of '5 slots' for each position (Forward, Center, Guard). Change the hardcoded slot counts in the stats display to reflect the new maximum capacity of 2 slots per position."
         }
       ]
     }

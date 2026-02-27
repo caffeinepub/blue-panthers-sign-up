@@ -2,27 +2,8 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-on-the-public-sign-up-page-signuppage-tsx-mark-the-guard-position-as-unavailable-disable-the-guard-option-in-the-position-selector-display-a-visible-not-available-label-or-badge-next-to-it-and-prevent-users-from-submitting-the-form-with-guard-selected",
-      "featureTitle": "On the public sign-up page (SignUpPage.tsx), mark the 'Guard' position as unavailable: disable the Guard option in the position selector, display a visible 'Not Available' label or badge next to it, and prevent users from submitting the form with Guard selected.",
-      "files": [
-        "frontend/src/pages/SignUpPage.tsx"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0",
-        "authorization@4.0.0"
-      ],
-      "testIds": [
-        "REQ-1"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-update-the-herosection-stats-bar-herosection-tsx-to-reflect-that-the-guard-position-is-currently-unavailable-so-that-the-public-facing-branding-is-consistent-with-the-sign-up-form-restriction",
-      "featureTitle": "Update the HeroSection stats bar (HeroSection.tsx) to reflect that the Guard position is currently unavailable, so that the public-facing branding is consistent with the sign-up form restriction.",
+      "featureId": "feature-update-the-herosection-stats-bar-to-display-2-slots-instead-of-5-slots-for-each-position-forward-center-guard",
+      "featureTitle": "Update the HeroSection stats bar to display '2 slots' (instead of '5 slots') for each position (Forward, Center, Guard).",
       "files": [
         "frontend/src/components/HeroSection.tsx"
       ],

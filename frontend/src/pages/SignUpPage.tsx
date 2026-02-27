@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { CheckCircle, Loader2, AlertCircle, User, Mail, Phone, Calendar, Trophy, Star, Shield } from 'lucide-react';
+import { CheckCircle, Loader2, AlertCircle, User, Mail, Phone, Calendar, Trophy } from 'lucide-react';
 import { Position, ExperienceLevel } from '../backend';
-import { useSubmitSignUp, type SignUpFormData } from '../hooks/useQueries';
+import { useSubmitSignUp, CENTER_MAX_CAPACITY, type SignUpFormData } from '../hooks/useQueries';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -17,17 +17,13 @@ import {
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import HeroSection from '../components/HeroSection';
 
-const POSITIONS = [
-    { value: Position.guard, label: 'Guard', unavailable: true },
-    { value: Position.forward, label: 'Forward', unavailable: false },
-    { value: Position.center, label: 'Center', unavailable: false },
-];
-
 const EXPERIENCE_LEVELS = [
     { value: ExperienceLevel.beginner, label: 'Beginner' },
     { value: ExperienceLevel.intermediate, label: 'Intermediate' },
     { value: ExperienceLevel.advanced, label: 'Advanced' },
 ];
+
+const POSITION_MAX_CAPACITY = 2;
 
 interface FormValues {
     name: string;
@@ -75,6 +71,11 @@ export default function SignUpPage() {
     const [isSuccess, setIsSuccess] = useState(false);
     const [submittedName, setSubmittedName] = useState('');
 
+    // Track position full states based on backend error responses
+    const [centerFull, setCenterFull] = useState(false);
+    const [forwardFull, setForwardFull] = useState(false);
+    const [guardFull, setGuardFull] = useState(false);
+
     const {
         register,
         handleSubmit,
@@ -96,10 +97,32 @@ export default function SignUpPage() {
     const watchPosition = watch('position');
     const watchExperience = watch('experienceLevel');
 
-    const onSubmit = async (data: FormValues) => {
-        if (data.position === Position.guard) {
-            return; // blocked by validation below, but extra safety
+    // Derive a user-friendly error message from backend errors
+    const getSubmitErrorMessage = (): string | null => {
+        if (!submitSignUp.isError) return null;
+        const msg = submitSignUp.error instanceof Error ? submitSignUp.error.message : String(submitSignUp.error);
+        if (msg.toLowerCase().includes('maximum capacity') || msg.toLowerCase().includes('maxcapacity')) {
+            const pos = watchPosition;
+            if (pos === Position.forward) {
+                return `The Forward position is now full (${POSITION_MAX_CAPACITY}/${POSITION_MAX_CAPACITY} slots taken). Please check back later.`;
+            }
+            if (pos === Position.guard) {
+                return `The Guard position is now full (${POSITION_MAX_CAPACITY}/${POSITION_MAX_CAPACITY} slots taken). Please check back later.`;
+            }
+            return `The Center position is now full (${CENTER_MAX_CAPACITY}/${CENTER_MAX_CAPACITY} slots taken). Please check back later.`;
         }
+        if (msg.toLowerCase().includes('closed') || msg.toLowerCase().includes('maxcapacity(0)')) {
+            return 'This position is currently closed for sign-ups.';
+        }
+        return msg;
+    };
+
+    const onSubmit = async (data: FormValues) => {
+        // Block submission if selected position is full
+        if (data.position === Position.center && centerFull) return;
+        if (data.position === Position.forward && forwardFull) return;
+        if (data.position === Position.guard && guardFull) return;
+
         try {
             const payload: SignUpFormData = {
                 name: data.name,
@@ -113,8 +136,14 @@ export default function SignUpPage() {
             setSubmittedName(data.name);
             setIsSuccess(true);
             reset();
-        } catch {
-            // error handled via submitSignUp.error
+        } catch (err) {
+            const msg = err instanceof Error ? err.message : String(err);
+            // If backend says a position is at capacity, mark it full in UI
+            if (msg.toLowerCase().includes('maximum capacity') || msg.toLowerCase().includes('maxcapacity')) {
+                if (data.position === Position.forward) setForwardFull(true);
+                else if (data.position === Position.guard) setGuardFull(true);
+                else setCenterFull(true);
+            }
         }
     };
 
@@ -124,9 +153,17 @@ export default function SignUpPage() {
         submitSignUp.reset();
     };
 
+    const submitErrorMessage = getSubmitErrorMessage();
+
+    // Determine if the currently selected position is full
+    const isSelectedPositionFull =
+        (watchPosition === Position.center && centerFull) ||
+        (watchPosition === Position.forward && forwardFull) ||
+        (watchPosition === Position.guard && guardFull);
+
     return (
         <>
-            <HeroSection />
+            <HeroSection centerFull={centerFull} forwardFull={forwardFull} guardFull={guardFull} />
 
             <section id="signup" className="py-16 px-4">
                 <div className="container mx-auto max-w-2xl">
@@ -140,7 +177,7 @@ export default function SignUpPage() {
                                     JOIN THE <span className="text-gold-400">TEAM</span>
                                 </h2>
                                 <p className="font-body text-muted-foreground text-base max-w-md mx-auto">
-                                    Fill out the form below to register your interest in joining the Blue Panthers for the 2026 season.
+                                    Fill out the form below to register your interest in joining the Blue Panthers NCAA program for the 2026 season.
                                 </p>
                             </div>
 
@@ -150,7 +187,7 @@ export default function SignUpPage() {
                                         PLAYER REGISTRATION
                                     </CardTitle>
                                     <CardDescription className="font-body text-muted-foreground">
-                                        All fields are required. We'll be in touch shortly after reviewing your application.
+                                        All fields are required. We'll be in touch shortly after reviewing your NCAA application.
                                     </CardDescription>
                                 </CardHeader>
 
@@ -208,7 +245,7 @@ export default function SignUpPage() {
                                             <Input
                                                 id="phone"
                                                 type="tel"
-                                                placeholder="e.g. +1 555 000 1234"
+                                                placeholder="e.g. (555) 123-4567"
                                                 className="bg-secondary border-border focus:border-gold-500 focus:ring-gold-500/30 text-foreground placeholder:text-muted-foreground/50"
                                                 disabled={submitSignUp.isPending}
                                                 {...register('phone', {
@@ -228,16 +265,15 @@ export default function SignUpPage() {
                                             <Input
                                                 id="age"
                                                 type="number"
-                                                min={10}
-                                                max={60}
                                                 placeholder="e.g. 22"
+                                                min={14}
+                                                max={40}
                                                 className="bg-secondary border-border focus:border-gold-500 focus:ring-gold-500/30 text-foreground placeholder:text-muted-foreground/50"
                                                 disabled={submitSignUp.isPending}
                                                 {...register('age', {
                                                     required: 'Age is required',
-                                                    min: { value: 10, message: 'Must be at least 10 years old' },
-                                                    max: { value: 60, message: 'Must be 60 or younger' },
-                                                    validate: (v) => !isNaN(parseInt(v, 10)) || 'Please enter a valid age',
+                                                    min: { value: 14, message: 'Must be at least 14 years old' },
+                                                    max: { value: 40, message: 'Must be 40 or younger' },
                                                 })}
                                             />
                                             {errors.age && <FieldError message={errors.age.message!} />}
@@ -247,64 +283,97 @@ export default function SignUpPage() {
                                         <div className="space-y-1.5">
                                             <Label className="font-display text-sm font-bold tracking-widest uppercase text-foreground/80 flex items-center gap-1.5">
                                                 <Trophy className="h-3.5 w-3.5 text-gold-500" />
-                                                Preferred Position
+                                                Position
                                             </Label>
                                             <Select
                                                 value={watchPosition}
                                                 onValueChange={(val) => {
-                                                    if (val !== Position.guard) {
-                                                        setValue('position', val as Position, { shouldValidate: true });
-                                                    }
+                                                    // Prevent selecting a full position
+                                                    if (val === Position.forward && forwardFull) return;
+                                                    if (val === Position.center && centerFull) return;
+                                                    if (val === Position.guard && guardFull) return;
+                                                    setValue('position', val as Position, { shouldValidate: true });
                                                 }}
                                                 disabled={submitSignUp.isPending}
                                             >
-                                                <SelectTrigger className="bg-secondary border-border text-foreground data-[placeholder]:text-muted-foreground/50 focus:ring-gold-500/30 focus:border-gold-500">
-                                                    <SelectValue placeholder="Select your position" />
+                                                <SelectTrigger className="bg-secondary border-border focus:border-gold-500 text-foreground w-full">
+                                                    <SelectValue placeholder="Select a position" />
                                                 </SelectTrigger>
                                                 <SelectContent className="bg-card border-border">
-                                                    {POSITIONS.map((p) => (
-                                                        <SelectItem
-                                                            key={p.value}
-                                                            value={p.value}
-                                                            disabled={p.unavailable}
-                                                            className={
-                                                                p.unavailable
-                                                                    ? 'opacity-50 cursor-not-allowed text-muted-foreground data-[disabled]:pointer-events-none'
-                                                                    : 'text-foreground focus:bg-gold-500/20 focus:text-foreground'
-                                                            }
-                                                        >
-                                                            <span className="flex items-center justify-between w-full gap-3">
-                                                                <span className="flex items-center gap-2">
-                                                                    {p.unavailable && (
-                                                                        <Shield className="h-3.5 w-3.5 text-muted-foreground/60" />
-                                                                    )}
-                                                                    {p.label}
-                                                                </span>
-                                                                {p.unavailable && (
-                                                                    <span className="ml-2 text-[10px] font-bold tracking-widest uppercase bg-muted text-muted-foreground px-1.5 py-0.5 rounded">
-                                                                        Not Available
-                                                                    </span>
-                                                                )}
-                                                            </span>
-                                                        </SelectItem>
-                                                    ))}
+                                                    {/* Guard */}
+                                                    <SelectItem
+                                                        value={Position.guard}
+                                                        disabled={guardFull}
+                                                        className={guardFull ? 'opacity-50 cursor-not-allowed' : ''}
+                                                    >
+                                                        <span className="flex items-center gap-2">
+                                                            Guard
+                                                            {guardFull ? (
+                                                                <Badge variant="outline" className="text-[10px] px-1 py-0 border-destructive/40 text-destructive/70 ml-1">
+                                                                    Full
+                                                                </Badge>
+                                                            ) : (
+                                                                <Badge variant="outline" className="text-[10px] px-1 py-0 border-gold-500/40 text-gold-500 ml-1">
+                                                                    {POSITION_MAX_CAPACITY} slots
+                                                                </Badge>
+                                                            )}
+                                                        </span>
+                                                    </SelectItem>
+
+                                                    {/* Forward */}
+                                                    <SelectItem
+                                                        value={Position.forward}
+                                                        disabled={forwardFull}
+                                                        className={forwardFull ? 'opacity-50 cursor-not-allowed' : ''}
+                                                    >
+                                                        <span className="flex items-center gap-2">
+                                                            Forward
+                                                            {forwardFull ? (
+                                                                <Badge variant="outline" className="text-[10px] px-1 py-0 border-destructive/40 text-destructive/70 ml-1">
+                                                                    Full
+                                                                </Badge>
+                                                            ) : (
+                                                                <Badge variant="outline" className="text-[10px] px-1 py-0 border-gold-500/40 text-gold-500 ml-1">
+                                                                    {POSITION_MAX_CAPACITY} slots
+                                                                </Badge>
+                                                            )}
+                                                        </span>
+                                                    </SelectItem>
+
+                                                    {/* Center */}
+                                                    <SelectItem
+                                                        value={Position.center}
+                                                        disabled={centerFull}
+                                                        className={centerFull ? 'opacity-50 cursor-not-allowed' : ''}
+                                                    >
+                                                        <span className="flex items-center gap-2">
+                                                            Center
+                                                            {centerFull ? (
+                                                                <Badge variant="outline" className="text-[10px] px-1 py-0 border-destructive/40 text-destructive/70 ml-1">
+                                                                    Full
+                                                                </Badge>
+                                                            ) : (
+                                                                <Badge variant="outline" className="text-[10px] px-1 py-0 border-gold-500/40 text-gold-500 ml-1">
+                                                                    {CENTER_MAX_CAPACITY} slots
+                                                                </Badge>
+                                                            )}
+                                                        </span>
+                                                    </SelectItem>
                                                 </SelectContent>
                                             </Select>
-                                            <input
-                                                type="hidden"
-                                                {...register('position', {
-                                                    required: 'Please select a position',
-                                                    validate: (val) =>
-                                                        val !== Position.guard || 'Guard position is currently not available. Please select another position.',
-                                                })}
-                                            />
-                                            {errors.position && <FieldError message={errors.position.message!} />}
+                                            {errors.position && <FieldError message="Please select a position" />}
+                                            {isSelectedPositionFull && (
+                                                <p className="text-xs text-destructive font-body flex items-center gap-1 mt-1">
+                                                    <AlertCircle className="h-3 w-3 shrink-0" />
+                                                    This position is full. Please select a different position.
+                                                </p>
+                                            )}
                                         </div>
 
                                         {/* Experience Level */}
                                         <div className="space-y-1.5">
                                             <Label className="font-display text-sm font-bold tracking-widest uppercase text-foreground/80 flex items-center gap-1.5">
-                                                <Star className="h-3.5 w-3.5 text-gold-500" />
+                                                <Trophy className="h-3.5 w-3.5 text-gold-500" />
                                                 Experience Level
                                             </Label>
                                             <Select
@@ -312,45 +381,33 @@ export default function SignUpPage() {
                                                 onValueChange={(val) => setValue('experienceLevel', val as ExperienceLevel, { shouldValidate: true })}
                                                 disabled={submitSignUp.isPending}
                                             >
-                                                <SelectTrigger className="bg-secondary border-border text-foreground data-[placeholder]:text-muted-foreground/50 focus:ring-gold-500/30 focus:border-gold-500">
-                                                    <SelectValue placeholder="Select your experience level" />
+                                                <SelectTrigger className="bg-secondary border-border focus:border-gold-500 text-foreground w-full">
+                                                    <SelectValue placeholder="Select experience level" />
                                                 </SelectTrigger>
                                                 <SelectContent className="bg-card border-border">
-                                                    {EXPERIENCE_LEVELS.map((e) => (
-                                                        <SelectItem
-                                                            key={e.value}
-                                                            value={e.value}
-                                                            className="text-foreground focus:bg-gold-500/20 focus:text-foreground"
-                                                        >
-                                                            {e.label}
+                                                    {EXPERIENCE_LEVELS.map((level) => (
+                                                        <SelectItem key={level.value} value={level.value}>
+                                                            {level.label}
                                                         </SelectItem>
                                                     ))}
                                                 </SelectContent>
                                             </Select>
-                                            <input
-                                                type="hidden"
-                                                {...register('experienceLevel', { required: 'Please select your experience level' })}
-                                            />
-                                            {errors.experienceLevel && <FieldError message={errors.experienceLevel.message!} />}
+                                            {errors.experienceLevel && <FieldError message="Please select an experience level" />}
                                         </div>
 
-                                        {/* Submission Error */}
-                                        {submitSignUp.isError && (
-                                            <div className="flex items-start gap-2 bg-destructive/10 border border-destructive/30 rounded-md p-3">
-                                                <AlertCircle className="h-4 w-4 text-destructive mt-0.5 shrink-0" />
-                                                <p className="text-sm text-destructive font-body">
-                                                    {submitSignUp.error instanceof Error
-                                                        ? submitSignUp.error.message
-                                                        : 'Something went wrong. Please try again.'}
-                                                </p>
+                                        {/* Submit Error */}
+                                        {submitErrorMessage && (
+                                            <div className="flex items-start gap-2 p-3 rounded bg-destructive/10 border border-destructive/20">
+                                                <AlertCircle className="h-4 w-4 text-destructive shrink-0 mt-0.5" />
+                                                <p className="font-body text-sm text-destructive">{submitErrorMessage}</p>
                                             </div>
                                         )}
 
                                         {/* Submit Button */}
                                         <Button
                                             type="submit"
-                                            disabled={submitSignUp.isPending}
-                                            className="w-full bg-gold-500 hover:bg-gold-400 text-navy-900 font-display text-base font-black tracking-widest uppercase py-6 rounded-sm shadow-gold hover:shadow-gold-lg transition-all duration-200 disabled:opacity-60"
+                                            disabled={submitSignUp.isPending || isSelectedPositionFull}
+                                            className="w-full bg-gold-500 hover:bg-gold-400 text-navy-900 font-display font-black text-base tracking-widest uppercase py-6 shadow-gold disabled:opacity-50"
                                         >
                                             {submitSignUp.isPending ? (
                                                 <>
@@ -358,46 +415,12 @@ export default function SignUpPage() {
                                                     Submitting...
                                                 </>
                                             ) : (
-                                                'Sign Me Up!'
+                                                'Submit Application'
                                             )}
                                         </Button>
                                     </form>
                                 </CardContent>
                             </Card>
-
-                            {/* Why Join Section */}
-                            <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6">
-                                {[
-                                    {
-                                        icon: '🏀',
-                                        title: 'Elite Coaching',
-                                        desc: 'Train under experienced coaches who have developed players at every level.',
-                                    },
-                                    {
-                                        icon: '🤝',
-                                        title: 'Team Culture',
-                                        desc: 'Join a brotherhood built on respect, hard work, and winning together.',
-                                    },
-                                    {
-                                        icon: '🏆',
-                                        title: 'Championship Focus',
-                                        desc: 'We compete to win. Every practice, every game, every season.',
-                                    },
-                                ].map((item) => (
-                                    <div
-                                        key={item.title}
-                                        className="bg-card border border-border rounded-sm p-6 text-center hover:border-gold-500/40 transition-colors"
-                                    >
-                                        <div className="text-3xl mb-3">{item.icon}</div>
-                                        <h3 className="font-display text-lg font-black text-foreground tracking-wide uppercase mb-2">
-                                            {item.title}
-                                        </h3>
-                                        <p className="font-body text-sm text-muted-foreground leading-relaxed">
-                                            {item.desc}
-                                        </p>
-                                    </div>
-                                ))}
-                            </div>
                         </>
                     )}
                 </div>

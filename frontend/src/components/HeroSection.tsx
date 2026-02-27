@@ -1,6 +1,19 @@
 import { MapPin } from 'lucide-react';
+import { CENTER_MAX_CAPACITY } from '../hooks/useQueries';
 
-export default function HeroSection() {
+const POSITION_MAX_CAPACITY = 2;
+
+interface HeroSectionProps {
+    centerFull?: boolean;
+    forwardFull?: boolean;
+    guardFull?: boolean;
+}
+
+export default function HeroSection({
+    centerFull = false,
+    forwardFull = false,
+    guardFull = false,
+}: HeroSectionProps) {
     return (
         <section className="relative overflow-hidden">
             {/* Hero Banner Image */}
@@ -54,31 +67,59 @@ export default function HeroSection() {
                             <span className="font-body text-xs font-semibold text-navy-800/70 uppercase tracking-widest">Season</span>
                         </div>
                         <div className="flex items-center gap-2">
-                            <span className="font-display text-xl font-black text-navy-900 leading-none">Premier</span>
+                            <span className="font-display text-xl font-black text-navy-900 leading-none">League. maine</span>
                             <span className="font-body text-xs font-semibold text-navy-800/70 uppercase tracking-widest">League</span>
                         </div>
 
                         {/* Divider */}
                         <div className="hidden md:block w-px h-6 bg-navy-900/20" />
 
-                        {/* Open positions */}
-                        <div className="flex items-center gap-2">
-                            <span className="font-display text-xl font-black text-navy-900 leading-none">Forward</span>
-                            <span className="font-body text-xs font-semibold text-navy-800/70 uppercase tracking-widest">Open</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <span className="font-display text-xl font-black text-navy-900 leading-none">Center</span>
-                            <span className="font-body text-xs font-semibold text-navy-800/70 uppercase tracking-widest">Open</span>
+                        {/* Forward — up to 2 slots */}
+                        <div className={`flex items-center gap-2 ${forwardFull ? 'opacity-60' : ''}`}>
+                            <span className={`font-display text-xl font-black text-navy-900 leading-none ${forwardFull ? 'line-through decoration-navy-900/60' : ''}`}>
+                                Forward
+                            </span>
+                            {forwardFull ? (
+                                <span className="font-body text-xs font-bold text-navy-900 uppercase tracking-widest bg-navy-900/20 px-1.5 py-0.5 rounded">
+                                    Full
+                                </span>
+                            ) : (
+                                <span className="font-body text-xs font-semibold text-navy-800/70 uppercase tracking-widest">
+                                    {POSITION_MAX_CAPACITY} Slots Open
+                                </span>
+                            )}
                         </div>
 
-                        {/* Guard — unavailable */}
-                        <div className="flex items-center gap-2 opacity-60">
-                            <span className="font-display text-xl font-black text-navy-900 leading-none line-through decoration-navy-900/60">
+                        {/* Center — up to 2 slots */}
+                        <div className={`flex items-center gap-2 ${centerFull ? 'opacity-60' : ''}`}>
+                            <span className={`font-display text-xl font-black text-navy-900 leading-none ${centerFull ? 'line-through decoration-navy-900/60' : ''}`}>
+                                Center
+                            </span>
+                            {centerFull ? (
+                                <span className="font-body text-xs font-bold text-navy-900 uppercase tracking-widest bg-navy-900/20 px-1.5 py-0.5 rounded">
+                                    Full
+                                </span>
+                            ) : (
+                                <span className="font-body text-xs font-semibold text-navy-800/70 uppercase tracking-widest">
+                                    {CENTER_MAX_CAPACITY} Slots Open
+                                </span>
+                            )}
+                        </div>
+
+                        {/* Guard — up to 2 slots */}
+                        <div className={`flex items-center gap-2 ${guardFull ? 'opacity-60' : ''}`}>
+                            <span className={`font-display text-xl font-black text-navy-900 leading-none ${guardFull ? 'line-through decoration-navy-900/60' : ''}`}>
                                 Guard
                             </span>
-                            <span className="font-body text-xs font-bold text-navy-900 uppercase tracking-widest bg-navy-900/20 px-1.5 py-0.5 rounded">
-                                Unavailable
-                            </span>
+                            {guardFull ? (
+                                <span className="font-body text-xs font-bold text-navy-900 uppercase tracking-widest bg-navy-900/20 px-1.5 py-0.5 rounded">
+                                    Full
+                                </span>
+                            ) : (
+                                <span className="font-body text-xs font-semibold text-navy-800/70 uppercase tracking-widest">
+                                    {POSITION_MAX_CAPACITY} Slots Open
+                                </span>
+                            )}
                         </div>
                     </div>
                 </div>

@@ -1,54 +1,52 @@
 {
   "kind": "build_request",
-  "title": "Display Guard position as not available on the sign-up page",
+  "title": "Set all positions to 2 open slots",
   "projectName": "Blue Panthers Sign-Up",
   "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "On the public sign-up page (SignUpPage.tsx), mark the 'Guard' position as unavailable: disable the Guard option in the position selector, display a visible 'Not Available' label or badge next to it, and prevent users from submitting the form with Guard selected.",
-      "target": "frontend",
+      "text": "Update the backend capacity enforcement so that each basketball position (Forward, Center, Guard) has a maximum of 2 slots instead of the current cap of 5.",
+      "target": "backend",
       "source": {
         "messageIds": [
-          "msg-6"
+          "msg-4"
         ],
         "quotes": [
-          "make on the website that that guard is not available"
+          "Make it so all positions have two slots open."
         ]
       },
       "acceptanceCriteria": [
-        "The Guard option in the position dropdown/selector is visually marked as 'Not Available' (e.g., greyed out with a badge or label).",
-        "The Guard option is disabled and cannot be selected by the user.",
-        "If a user somehow has Guard selected, form submission is blocked with a clear message indicating the position is unavailable.",
-        "All other positions remain selectable and unaffected."
+        "The backend rejects sign-ups for any position once 2 players have already registered for that position.",
+        "Sign-ups for a position with fewer than 2 registered players are accepted normally.",
+        "All three positions (Forward, Center, Guard) share the same cap of 2."
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Update the HeroSection stats bar (HeroSection.tsx) to reflect that the Guard position is currently unavailable, so that the public-facing branding is consistent with the sign-up form restriction.",
+      "text": "Update the HeroSection stats bar to display '2 slots' (instead of '5 slots') for each position (Forward, Center, Guard).",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-6"
+          "msg-4"
         ],
         "quotes": [
-          "make on the website that that guard is not available"
+          "Make it so all positions have two slots open."
         ]
       },
       "acceptanceCriteria": [
-        "The stats bar or positions display in the hero section shows Guard as 'Unavailable' or 'Closed'.",
-        "Other open positions are still shown as available."
+        "The stats bar in HeroSection shows '2 slots' for Forward, Center, and Guard.",
+        "The displayed slot count reflects the updated capacity of 2."
       ]
     }
   ],
   "constraints": [
-    "Do not modify any files under frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, or frontend/src/components/ui.",
-    "Do not change the backend data model or stored sign-up records."
+    "Do not change the league name ('League. maine') anywhere in the app.",
+    "Apply the capacity change uniformly to all three positions — Forward, Center, and Guard."
   ],
   "nonGoals": [
-    "Adding a backend flag or admin toggle for position availability.",
-    "Removing the Guard position permanently from the codebase.",
-    "Changing any other position's availability."
+    "Adding per-position configurable slot counts via an admin UI.",
+    "Any changes to the sign-up form fields or player data model."
   ],
   "imageRequirements": {
     "required": [],

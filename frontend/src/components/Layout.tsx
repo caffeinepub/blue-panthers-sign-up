@@ -21,7 +21,7 @@ export default function Layout({ children }: LayoutProps) {
                                 BLUE PANTHERS
                             </span>
                             <span className="font-body text-xs text-foreground/50 tracking-widest uppercase">
-                                Basketball Club
+                                League. maine
                             </span>
                         </div>
                     </div>
@@ -53,14 +53,17 @@ export default function Layout({ children }: LayoutProps) {
                         </span>
                     </div>
                     {/* Location */}
-                    <div className="flex items-center justify-center gap-1.5 mb-3">
+                    <div className="flex items-center justify-center gap-1.5 mb-1">
                         <MapPin className="h-3.5 w-3.5 text-gold-500/70 flex-shrink-0" />
                         <span className="font-body text-sm text-gold-500/70 tracking-wide uppercase font-semibold">
                             Jackman, Maine 04945
                         </span>
                     </div>
+                    <p className="font-body text-xs text-gold-500/50 tracking-widest uppercase mb-3">
+                        League. maine
+                    </p>
                     <p className="text-muted-foreground text-sm mb-2">
-                        © {new Date().getFullYear()} Blue Panthers Basketball Club. All rights reserved.
+                        © {new Date().getFullYear()} Blue Panthers · League. maine. All rights reserved.
                     </p>
                     <p className="text-muted-foreground/60 text-xs mb-3">
                         Built with{' '}

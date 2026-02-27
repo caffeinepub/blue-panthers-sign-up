@@ -11,6 +11,8 @@ export interface SignUpFormData {
     experienceLevel: ExperienceLevel;
 }
 
+export const CENTER_MAX_CAPACITY = 2;
+
 export function useSubmitSignUp() {
     const { actor } = useActor();
     const queryClient = useQueryClient();
@@ -34,6 +36,7 @@ export function useSubmitSignUp() {
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['signUps'] });
+            queryClient.invalidateQueries({ queryKey: ['allSignUps'] });
         },
     });
 }
