@@ -1,94 +1,54 @@
 {
   "kind": "build_request",
-  "title": "Owner Admin Dashboard to View Sign-Ups",
+  "title": "Display Guard position as not available on the sign-up page",
   "projectName": "Blue Panthers Sign-Up",
   "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Add a backend query function that returns all sign-up records stored in the map, including each player's ID, name, email, phone, age, position, and experience level.",
-      "target": "backend",
+      "text": "On the public sign-up page (SignUpPage.tsx), mark the 'Guard' position as unavailable: disable the Guard option in the position selector, display a visible 'Not Available' label or badge next to it, and prevent users from submitting the form with Guard selected.",
+      "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-7"
+          "msg-6"
         ],
         "quotes": [
-          "make a page for the owner of the app which is me to see who signed up for the blue panthers"
+          "make on the website that that guard is not available"
         ]
       },
       "acceptanceCriteria": [
-        "A public query function (e.g., getAllSignUps) returns an array of all stored sign-up entries.",
-        "Each entry includes: ID, name, email, phone, age, position, and experience level.",
-        "The function returns an empty array when no sign-ups exist."
+        "The Guard option in the position dropdown/selector is visually marked as 'Not Available' (e.g., greyed out with a badge or label).",
+        "The Guard option is disabled and cannot be selected by the user.",
+        "If a user somehow has Guard selected, form submission is blocked with a clear message indicating the position is unavailable.",
+        "All other positions remain selectable and unaffected."
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Add a React Query hook in useQueries.ts to fetch all sign-ups from the backend using the new getAllSignUps query function.",
+      "text": "Update the HeroSection stats bar (HeroSection.tsx) to reflect that the Guard position is currently unavailable, so that the public-facing branding is consistent with the sign-up form restriction.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-7"
+          "msg-6"
         ],
         "quotes": [
-          "make a page for the owner of the app which is me to see who signed up for the blue panthers"
+          "make on the website that that guard is not available"
         ]
       },
       "acceptanceCriteria": [
-        "A useGetAllSignUps hook exists that calls the backend getAllSignUps function.",
-        "The hook uses React Query and returns data, loading, and error states."
-      ]
-    },
-    {
-      "id": "REQ-3",
-      "text": "Create an Owner Dashboard page (frontend/src/pages/OwnerDashboard.tsx) that requires Internet Identity login to access. Once authenticated, display a table of all sign-ups showing each player's name, email, phone, age, position, and experience level. If not logged in, show a login prompt with an Internet Identity sign-in button. Style the page consistently with the existing navy and gold Blue Panthers design system.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-7"
-        ],
-        "quotes": [
-          "make a page for the owner of the app which is me to see who signed up for the blue panthers"
-        ]
-      },
-      "acceptanceCriteria": [
-        "The page is accessible via a /owner route or similar.",
-        "Unauthenticated users see a login prompt with an Internet Identity sign-in button.",
-        "Authenticated users see a table listing all sign-ups with columns: Name, Email, Phone, Age, Position, Experience Level.",
-        "An empty state message is shown when there are no sign-ups.",
-        "A loading indicator is shown while data is being fetched.",
-        "The page uses the existing navy and gold color palette and Barlow font."
-      ]
-    },
-    {
-      "id": "REQ-4",
-      "text": "Add a navigation link or route in App.tsx so the Owner Dashboard page is reachable (e.g., via a discreet 'Owner Login' link in the footer or header).",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-7"
-        ],
-        "quotes": [
-          "make a page for the owner of the app which is me to see who signed up for the blue panthers"
-        ]
-      },
-      "acceptanceCriteria": [
-        "A link to the Owner Dashboard exists in the app UI (footer or header).",
-        "Clicking the link navigates to the Owner Dashboard page.",
-        "The link is styled subtly so it does not distract public visitors."
+        "The stats bar or positions display in the hero section shows Guard as 'Unavailable' or 'Closed'.",
+        "Other open positions are still shown as available."
       ]
     }
   ],
   "constraints": [
-    "The Owner Dashboard must use Internet Identity authentication via the existing useInternetIdentity hook — do not implement any other auth mechanism.",
-    "Do not modify files in frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, or frontend/src/components/ui.",
-    "All Motoko logic must remain in the single backend/main.mo actor file."
+    "Do not modify any files under frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, or frontend/src/components/ui.",
+    "Do not change the backend data model or stored sign-up records."
   ],
   "nonGoals": [
-    "Role-based access control or multi-owner support.",
-    "Ability to delete or edit sign-up records from the dashboard.",
-    "Email notifications or export functionality.",
-    "Any external authentication provider beyond Internet Identity."
+    "Adding a backend flag or admin toggle for position availability.",
+    "Removing the Guard position permanently from the codebase.",
+    "Changing any other position's availability."
   ],
   "imageRequirements": {
     "required": [],

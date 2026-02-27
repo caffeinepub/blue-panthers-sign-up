@@ -1,78 +1,46 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-27T12:51:12.464Z",
+  "generatedAt": "2026-02-27T12:58:07.181Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 4,
-    "implemented": 3,
+    "total": 2,
+    "implemented": 2,
     "items": [
       {
         "id": "REQ-1",
-        "summary": "Add a backend query function that returns all sign-up records stored in the map, including each player's ID, name, email, phone, age, position, and experience level.",
-        "status": "unknown",
-        "plannedFiles": [],
-        "matchedFiles": []
+        "summary": "On the public sign-up page (SignUpPage.tsx), mark the 'Guard' position as unavailable: disable the Guard option in the position selector, display a visible 'Not Available' label or badge next to it, and prevent users from submitting the form with Guard selected.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/pages/SignUpPage.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/pages/SignUpPage.tsx"
+        ]
       },
       {
         "id": "REQ-2",
-        "summary": "Add a React Query hook in useQueries.ts to fetch all sign-ups from the backend using the new getAllSignUps query function.",
+        "summary": "Update the HeroSection stats bar (HeroSection.tsx) to reflect that the Guard position is currently unavailable, so that the public-facing branding is consistent with the sign-up form restriction.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/hooks/useQueries.ts"
+          "frontend/src/components/HeroSection.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/hooks/useQueries.ts"
-        ]
-      },
-      {
-        "id": "REQ-3",
-        "summary": "Create an Owner Dashboard page (frontend/src/pages/OwnerDashboard.tsx) that requires Internet Identity login to access. Once authenticated, display a table of all sign-ups showing each player's name, email, phone, age, position, and experience level. If not logged in, show a login prompt with an Internet Identity sign-in button. Style the page consistently with the existing navy and gold Blue Panthers design system.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/pages/OwnerDashboard.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/pages/OwnerDashboard.tsx"
-        ]
-      },
-      {
-        "id": "REQ-4",
-        "summary": "Add a navigation link or route in App.tsx so the Owner Dashboard page is reachable (e.g., via a discreet 'Owner Login' link in the footer or header).",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/App.tsx",
-          "frontend/src/components/Layout.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/App.tsx",
-          "frontend/src/components/Layout.tsx"
+          "frontend/src/components/HeroSection.tsx"
         ]
       }
     ]
   },
   "changedFiles": [
-    "backend/authorization/MixinAuthorization.mo",
-    "backend/authorization/access-control.mo",
-    "backend/main.mo",
     "build-request.json",
-    "caffeine.lock.json",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/App.tsx",
-    "frontend/src/backend.d.ts",
-    "frontend/src/backend.ts",
-    "frontend/src/components/Layout.tsx",
-    "frontend/src/declarations/backend.did.d.ts",
-    "frontend/src/declarations/backend.did.js",
-    "frontend/src/hooks/useActor.ts",
-    "frontend/src/hooks/useQueries.ts",
-    "frontend/src/pages/OwnerDashboard.tsx",
-    "frontend/src/utils/urlParams.ts",
+    "frontend/src/components/HeroSection.tsx",
+    "frontend/src/pages/SignUpPage.tsx",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

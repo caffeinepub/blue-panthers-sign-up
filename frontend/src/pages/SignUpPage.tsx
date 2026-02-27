@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { CheckCircle, Loader2, AlertCircle, User, Mail, Phone, Calendar, Trophy, Star } from 'lucide-react';
+import { CheckCircle, Loader2, AlertCircle, User, Mail, Phone, Calendar, Trophy, Star, Shield } from 'lucide-react';
 import { Position, ExperienceLevel } from '../backend';
 import { useSubmitSignUp, type SignUpFormData } from '../hooks/useQueries';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
 import {
     Select,
     SelectContent,
@@ -17,9 +18,9 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import HeroSection from '../components/HeroSection';
 
 const POSITIONS = [
-    { value: Position.guard, label: 'Guard' },
-    { value: Position.forward, label: 'Forward' },
-    { value: Position.center, label: 'Center' },
+    { value: Position.guard, label: 'Guard', unavailable: true },
+    { value: Position.forward, label: 'Forward', unavailable: false },
+    { value: Position.center, label: 'Center', unavailable: false },
 ];
 
 const EXPERIENCE_LEVELS = [
@@ -35,6 +36,38 @@ interface FormValues {
     age: string;
     position: Position;
     experienceLevel: ExperienceLevel;
+}
+
+function FieldError({ message }: { message: string }) {
+    return (
+        <p className="text-xs text-destructive font-body flex items-center gap-1 mt-1">
+            <AlertCircle className="h-3 w-3 shrink-0" />
+            {message}
+        </p>
+    );
+}
+
+function SuccessCard({ name, onReset }: { name: string; onReset: () => void }) {
+    return (
+        <div className="text-center py-16 px-4">
+            <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gold-500/20 border-2 border-gold-500/40 mb-6">
+                <CheckCircle className="h-10 w-10 text-gold-400" />
+            </div>
+            <h2 className="font-display text-4xl font-black text-foreground mb-3">
+                YOU'RE <span className="text-gold-400">IN!</span>
+            </h2>
+            <p className="font-body text-muted-foreground text-base max-w-sm mx-auto mb-8">
+                Thanks, <strong className="text-foreground">{name}</strong>! Your application has been received. We'll be in touch soon.
+            </p>
+            <Button
+                onClick={onReset}
+                variant="outline"
+                className="border-gold-500/40 text-gold-400 hover:bg-gold-500/10 font-display font-bold tracking-widest uppercase"
+            >
+                Sign Up Another Player
+            </Button>
+        </div>
+    );
 }
 
 export default function SignUpPage() {
@@ -64,6 +97,9 @@ export default function SignUpPage() {
     const watchExperience = watch('experienceLevel');
 
     const onSubmit = async (data: FormValues) => {
+        if (data.position === Position.guard) {
+            return; // blocked by validation below, but extra safety
+        }
         try {
             const payload: SignUpFormData = {
                 name: data.name,
@@ -215,7 +251,11 @@ export default function SignUpPage() {
                                             </Label>
                                             <Select
                                                 value={watchPosition}
-                                                onValueChange={(val) => setValue('position', val as Position, { shouldValidate: true })}
+                                                onValueChange={(val) => {
+                                                    if (val !== Position.guard) {
+                                                        setValue('position', val as Position, { shouldValidate: true });
+                                                    }
+                                                }}
                                                 disabled={submitSignUp.isPending}
                                             >
                                                 <SelectTrigger className="bg-secondary border-border text-foreground data-[placeholder]:text-muted-foreground/50 focus:ring-gold-500/30 focus:border-gold-500">
@@ -226,16 +266,37 @@ export default function SignUpPage() {
                                                         <SelectItem
                                                             key={p.value}
                                                             value={p.value}
-                                                            className="text-foreground focus:bg-gold-500/20 focus:text-foreground"
+                                                            disabled={p.unavailable}
+                                                            className={
+                                                                p.unavailable
+                                                                    ? 'opacity-50 cursor-not-allowed text-muted-foreground data-[disabled]:pointer-events-none'
+                                                                    : 'text-foreground focus:bg-gold-500/20 focus:text-foreground'
+                                                            }
                                                         >
-                                                            {p.label}
+                                                            <span className="flex items-center justify-between w-full gap-3">
+                                                                <span className="flex items-center gap-2">
+                                                                    {p.unavailable && (
+                                                                        <Shield className="h-3.5 w-3.5 text-muted-foreground/60" />
+                                                                    )}
+                                                                    {p.label}
+                                                                </span>
+                                                                {p.unavailable && (
+                                                                    <span className="ml-2 text-[10px] font-bold tracking-widest uppercase bg-muted text-muted-foreground px-1.5 py-0.5 rounded">
+                                                                        Not Available
+                                                                    </span>
+                                                                )}
+                                                            </span>
                                                         </SelectItem>
                                                     ))}
                                                 </SelectContent>
                                             </Select>
                                             <input
                                                 type="hidden"
-                                                {...register('position', { required: 'Please select a position' })}
+                                                {...register('position', {
+                                                    required: 'Please select a position',
+                                                    validate: (val) =>
+                                                        val !== Position.guard || 'Guard position is currently not available. Please select another position.',
+                                                })}
                                             />
                                             {errors.position && <FieldError message={errors.position.message!} />}
                                         </div>
@@ -303,96 +364,44 @@ export default function SignUpPage() {
                                     </form>
                                 </CardContent>
                             </Card>
+
+                            {/* Why Join Section */}
+                            <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6">
+                                {[
+                                    {
+                                        icon: '🏀',
+                                        title: 'Elite Coaching',
+                                        desc: 'Train under experienced coaches who have developed players at every level.',
+                                    },
+                                    {
+                                        icon: '🤝',
+                                        title: 'Team Culture',
+                                        desc: 'Join a brotherhood built on respect, hard work, and winning together.',
+                                    },
+                                    {
+                                        icon: '🏆',
+                                        title: 'Championship Focus',
+                                        desc: 'We compete to win. Every practice, every game, every season.',
+                                    },
+                                ].map((item) => (
+                                    <div
+                                        key={item.title}
+                                        className="bg-card border border-border rounded-sm p-6 text-center hover:border-gold-500/40 transition-colors"
+                                    >
+                                        <div className="text-3xl mb-3">{item.icon}</div>
+                                        <h3 className="font-display text-lg font-black text-foreground tracking-wide uppercase mb-2">
+                                            {item.title}
+                                        </h3>
+                                        <p className="font-body text-sm text-muted-foreground leading-relaxed">
+                                            {item.desc}
+                                        </p>
+                                    </div>
+                                ))}
+                            </div>
                         </>
                     )}
                 </div>
             </section>
-
-            {/* Why Join Section */}
-            {!isSuccess && (
-                <section className="py-16 px-4 bg-navy-900/50 border-t border-border">
-                    <div className="container mx-auto max-w-4xl">
-                        <h2 className="font-display text-3xl md:text-4xl font-black text-center text-foreground mb-10">
-                            WHY JOIN THE <span className="text-gold-400">PANTHERS?</span>
-                        </h2>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            {[
-                                {
-                                    icon: '🏆',
-                                    title: 'Winning Culture',
-                                    desc: 'Train with a team that competes to win every single game. Our coaches push you to be your best.',
-                                },
-                                {
-                                    icon: '🤝',
-                                    title: 'Brotherhood',
-                                    desc: 'More than a team — a family. Build lifelong bonds on and off the court.',
-                                },
-                                {
-                                    icon: '📈',
-                                    title: 'Player Development',
-                                    desc: 'Structured training programs designed to elevate your game regardless of your current level.',
-                                },
-                            ].map((item) => (
-                                <div
-                                    key={item.title}
-                                    className="bg-card border border-border rounded-lg p-6 text-center hover:border-gold-500/40 hover:shadow-gold transition-all duration-200"
-                                >
-                                    <div className="text-4xl mb-4">{item.icon}</div>
-                                    <h3 className="font-display text-xl font-black text-gold-400 mb-2 tracking-wide">
-                                        {item.title}
-                                    </h3>
-                                    <p className="font-body text-sm text-muted-foreground leading-relaxed">
-                                        {item.desc}
-                                    </p>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                </section>
-            )}
         </>
-    );
-}
-
-function FieldError({ message }: { message: string }) {
-    return (
-        <p className="text-xs text-destructive font-body flex items-center gap-1 mt-1">
-            <AlertCircle className="h-3 w-3 shrink-0" />
-            {message}
-        </p>
-    );
-}
-
-function SuccessCard({ name, onReset }: { name: string; onReset: () => void }) {
-    return (
-        <div className="text-center animate-fade-in-up">
-            <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gold-500/20 border-2 border-gold-500/50 mb-6 shadow-gold">
-                <CheckCircle className="h-10 w-10 text-gold-400" />
-            </div>
-            <h2 className="font-display text-4xl md:text-5xl font-black text-foreground mb-3">
-                WELCOME TO THE <span className="text-gold-400">PACK!</span>
-            </h2>
-            <p className="font-body text-lg text-muted-foreground mb-2">
-                Thanks for signing up, <span className="text-foreground font-semibold">{name}</span>!
-            </p>
-            <p className="font-body text-base text-muted-foreground max-w-md mx-auto mb-8">
-                Your application has been received. Our coaching staff will review it and reach out to you soon. Get ready to dominate the court!
-            </p>
-            <div className="bg-card border border-gold-500/30 rounded-lg p-6 max-w-sm mx-auto mb-8 shadow-gold">
-                <p className="font-display text-sm font-bold tracking-widest uppercase text-gold-400 mb-1">
-                    What's Next?
-                </p>
-                <p className="font-body text-sm text-muted-foreground">
-                    Keep an eye on your inbox. We'll send you details about tryouts, training schedules, and next steps.
-                </p>
-            </div>
-            <Button
-                onClick={onReset}
-                variant="outline"
-                className="border-gold-500/50 text-gold-400 hover:bg-gold-500/10 font-display font-bold tracking-widest uppercase"
-            >
-                Register Another Player
-            </Button>
-        </div>
     );
 }

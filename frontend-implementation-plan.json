@@ -1,60 +1,37 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Owner Admin Dashboard to View Sign-Ups",
+  "title": "Display Guard position as not available on the sign-up page",
   "requirements": [
     {
+      "id": "REQ-1",
+      "summary": "Mark the Guard position as unavailable on the public sign-up page: disable the Guard option in the position selector, display a 'Not Available' label or badge, and prevent form submission with Guard selected.",
+      "acceptanceCriteria": [
+        "The Guard option in the position dropdown/selector is visually marked as 'Not Available' (e.g., greyed out with a badge or label).",
+        "The Guard option is disabled and cannot be selected by the user.",
+        "If a user somehow has Guard selected, form submission is blocked with a clear message indicating the position is unavailable.",
+        "All other positions remain selectable and unaffected."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/SignUpPage.tsx",
+          "operation": "modify",
+          "description": "Update the position selector to mark the Guard position as unavailable: add a disabled state for the Guard option, display a 'Not Available' badge or label next to it, style it with reduced opacity or grey color, and add form validation that blocks submission if Guard is somehow selected with a clear error message. Ensure Center and Forward positions remain fully selectable."
+        }
+      ]
+    },
+    {
       "id": "REQ-2",
-      "summary": "Add React Query hook to fetch all sign-ups from the backend",
+      "summary": "Update the HeroSection stats bar to reflect that the Guard position is currently unavailable, maintaining consistency with the sign-up form restriction.",
       "acceptanceCriteria": [
-        "A useGetAllSignUps hook exists that calls the backend getAllSignUps function.",
-        "The hook uses React Query and returns data, loading, and error states."
+        "The stats bar or positions display in the hero section shows Guard as 'Unavailable' or 'Closed'.",
+        "Other open positions are still shown as available."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/hooks/useQueries.ts",
+          "path": "frontend/src/components/HeroSection.tsx",
           "operation": "modify",
-          "description": "Add a useGetAllSignUps hook that uses React Query to fetch all sign-up records from the backend getAllSignUps function. Follow the existing pattern in this file, using useActor to get the actor instance and useQuery with a queryKey of ['allSignUps']. Return data, isLoading, isError, and error states."
-        }
-      ]
-    },
-    {
-      "id": "REQ-3",
-      "summary": "Create Owner Dashboard page with Internet Identity authentication displaying all sign-ups in a table",
-      "acceptanceCriteria": [
-        "The page is accessible via a /owner route or similar.",
-        "Unauthenticated users see a login prompt with an Internet Identity sign-in button.",
-        "Authenticated users see a table listing all sign-ups with columns: Name, Email, Phone, Age, Position, Experience Level.",
-        "An empty state message is shown when there are no sign-ups.",
-        "A loading indicator is shown while data is being fetched.",
-        "The page uses the existing navy and gold color palette and Barlow font."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/pages/OwnerDashboard.tsx",
-          "operation": "create",
-          "description": "Create an Owner Dashboard page component that requires Internet Identity authentication to view sign-up records. Use the authorization component to verify admin access via useInternetIdentity hook and display a login prompt with Internet Identity sign-in button for unauthenticated users. Once authenticated, use the useGetAllSignUps hook from REQ-2 to fetch and display all sign-ups in a responsive table with columns for Name, Email, Phone, Age, Position, and Experience Level. Show a loading spinner while fetching data and an empty state message when no sign-ups exist. Style consistently with the navy and gold Blue Panthers design system using Tailwind classes that reference the existing OKLCH color tokens (--color-navy-*, --color-gold-*) and Barlow font family. Include a logout button for authenticated users."
-        }
-      ]
-    },
-    {
-      "id": "REQ-4",
-      "summary": "Wire Owner Dashboard page into the app navigation",
-      "acceptanceCriteria": [
-        "A link to the Owner Dashboard exists in the app UI (footer or header).",
-        "Clicking the link navigates to the Owner Dashboard page.",
-        "The link is styled subtly so it does not distract public visitors."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/App.tsx",
-          "operation": "modify",
-          "description": "Import OwnerDashboard page component and add routing support for the /owner path. Install and configure react-router-dom if not already present, wrapping the app content in a BrowserRouter and using Routes/Route components to handle both the root path (SignUpPage) and /owner path (OwnerDashboard)."
-        },
-        {
-          "path": "frontend/src/components/Layout.tsx",
-          "operation": "modify",
-          "description": "Add a subtle 'Owner Login' link in the footer that navigates to /owner route. Style the link discreetly using text-navy-400/50 or similar muted color so it blends into the footer and does not distract public visitors. Position it near the caffeine.ai attribution or as a separate small text element."
+          "description": "Update the gold stats bar that displays positions to show the Guard position as 'Unavailable' or 'Closed' while maintaining the display of Center and Forward as available open positions. Ensure the visual styling clearly differentiates unavailable positions from available ones."
         }
       ]
     }

@@ -2,10 +2,29 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-add-a-react-query-hook-in-usequeries-ts-to-fetch-all-sign-ups-from-the-backend-using-the-new-getallsignups-query-function",
-      "featureTitle": "Add a React Query hook in useQueries.ts to fetch all sign-ups from the backend using the new getAllSignUps query function.",
+      "featureId": "feature-on-the-public-sign-up-page-signuppage-tsx-mark-the-guard-position-as-unavailable-disable-the-guard-option-in-the-position-selector-display-a-visible-not-available-label-or-badge-next-to-it-and-prevent-users-from-submitting-the-form-with-guard-selected",
+      "featureTitle": "On the public sign-up page (SignUpPage.tsx), mark the 'Guard' position as unavailable: disable the Guard option in the position selector, display a visible 'Not Available' label or badge next to it, and prevent users from submitting the form with Guard selected.",
       "files": [
-        "frontend/src/hooks/useQueries.ts"
+        "frontend/src/pages/SignUpPage.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0"
+      ],
+      "testIds": [
+        "REQ-1"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-update-the-herosection-stats-bar-herosection-tsx-to-reflect-that-the-guard-position-is-currently-unavailable-so-that-the-public-facing-branding-is-consistent-with-the-sign-up-form-restriction",
+      "featureTitle": "Update the HeroSection stats bar (HeroSection.tsx) to reflect that the Guard position is currently unavailable, so that the public-facing branding is consistent with the sign-up form restriction.",
+      "files": [
+        "frontend/src/components/HeroSection.tsx"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -17,45 +36,6 @@
       ],
       "testIds": [
         "REQ-2"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-create-an-owner-dashboard-page-frontend-src-pages-ownerdashboard-tsx-that-requires-internet-identity-login-to-access-once-authenticated-display-a-table-of-all-sign-ups-showing-each-player-s-name-email-phone-age-position-and-experience-level-if-not-logged-in-show-a-login-prompt-with-an-internet-identity-sign-in-button-style-the-page-consistently-with-the-existing-navy-and-gold-blue-panthers-design-system",
-      "featureTitle": "Create an Owner Dashboard page (frontend/src/pages/OwnerDashboard.tsx) that requires Internet Identity login to access. Once authenticated, display a table of all sign-ups showing each player's name, email, phone, age, position, and experience level. If not logged in, show a login prompt with an Internet Identity sign-in button. Style the page consistently with the existing navy and gold Blue Panthers design system.",
-      "files": [
-        "frontend/src/pages/OwnerDashboard.tsx"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0",
-        "authorization@4.0.0"
-      ],
-      "testIds": [
-        "REQ-3"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-add-a-navigation-link-or-route-in-app-tsx-so-the-owner-dashboard-page-is-reachable-e-g-via-a-discreet-owner-login-link-in-the-footer-or-header",
-      "featureTitle": "Add a navigation link or route in App.tsx so the Owner Dashboard page is reachable (e.g., via a discreet 'Owner Login' link in the footer or header).",
-      "files": [
-        "frontend/src/App.tsx",
-        "frontend/src/components/Layout.tsx"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0",
-        "authorization@4.0.0"
-      ],
-      "testIds": [
-        "REQ-4"
       ],
       "confidence": "high"
     }

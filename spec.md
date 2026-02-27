@@ -1,12 +1,10 @@
 # Specification
 
 ## Summary
-**Goal:** Add a protected Owner Dashboard page where the app owner can log in with Internet Identity and view all player sign-ups for the Blue Panthers.
+**Goal:** Mark the "Guard" position as unavailable on the Blue Panthers sign-up page and hero section so users cannot sign up for that position.
 
 **Planned changes:**
-- Add a `getAllSignUps` query function in the backend that returns all stored sign-up records (ID, name, email, phone, age, position, experience level)
-- Add a `useGetAllSignUps` React Query hook in `useQueries.ts` to fetch all sign-ups from the backend
-- Create an `OwnerDashboard` page (`/owner` route) that shows a login prompt for unauthenticated users and a table of all sign-ups for authenticated users, styled with the existing navy and gold design system
-- Add a discreet navigation link to the Owner Dashboard in the app header or footer
+- In `SignUpPage.tsx`, disable the Guard option in the position selector, add a visible "Not Available" label/badge next to it, and block form submission if Guard is somehow selected.
+- In `HeroSection.tsx`, update the stats/positions bar to show Guard as "Unavailable" or "Closed" while keeping other positions shown as available.
 
-**User-visible outcome:** The app owner can navigate to a hidden Owner Dashboard link, log in with Internet Identity, and view a table of everyone who has signed up for the Blue Panthers.
+**User-visible outcome:** Visitors to the sign-up page will see Guard clearly marked as unavailable and will be unable to select or submit the form with that position. The hero section will consistently reflect that Guard is not open.
