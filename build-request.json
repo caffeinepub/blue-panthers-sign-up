@@ -1,71 +1,56 @@
 {
   "kind": "build_request",
-  "title": "Change Guard position to 1 open slot",
+  "title": "Protected sign-up viewer page requiring authentication",
+  "projectName": "Blue Panthers Sign-Up",
   "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Update the Guard position maximum capacity to 1 in the backend. The sign-up validation logic currently uses a max capacity of 2 for all positions; change the Guard position's max capacity to 1.",
-      "target": "backend",
+      "text": "Create a dedicated protected page (e.g., '/signups') that displays the list of all players who have signed up for Blue Panthers. The page must require the user to be signed in via Internet Identity before the sign-up list is shown. If the user is not authenticated, display a prompt to sign in rather than the list.",
+      "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-6"
+          "msg-4"
         ],
         "quotes": [
-          "Change the guard Position to one slot open."
+          "make a page on the app that you have to sign in to see who signed up for blue panthers"
         ]
       },
       "acceptanceCriteria": [
-        "The Guard position accepts at most 1 sign-up; a second Guard sign-up attempt returns a capacity error.",
-        "Forward and Center positions remain unaffected with a max capacity of 2."
+        "A new route (e.g., '/signups') is registered in App.tsx and accessible via navigation.",
+        "Unauthenticated users see a sign-in prompt instead of the sign-up list.",
+        "Authenticated users see a table of all Blue Panthers sign-up entries fetched from the backend.",
+        "The page includes login and logout controls consistent with the rest of the app's design.",
+        "The page is reachable via a navigation link in the app header or menu."
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Update the HeroSection stats bar in HeroSection.tsx to reflect the Guard position's new max capacity of 1. The stats bar should display '1 Slot Open' (singular) for Guard when no one has signed up, and 'Full' when the slot is taken. Forward and Center continue to show '2 Slots Open' or 'Full' as before.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-6"
-        ],
-        "quotes": [
-          "Change the guard Position to one slot open."
-        ]
-      },
-      "acceptanceCriteria": [
-        "HeroSection displays '1 Slot Open' for Guard when 0 players have signed up for that position.",
-        "HeroSection displays 'Full' for Guard when 1 player has signed up.",
-        "Forward and Center slots continue to display based on a max of 2 slots."
-      ]
-    },
-    {
-      "id": "REQ-3",
-      "text": "Generate a migration module (backend/migration.mo) that sets the Guard position max capacity to 1 and keeps Forward and Center at 2 during canister upgrade.",
+      "text": "Expose or reuse the existing backend query that returns all sign-ups so the new protected page can fetch the full list of sign-ups for authenticated callers. Ensure the query is accessible to any authenticated user (not only admins) if that is the intended access level, or confirm it remains admin-gated.",
       "target": "backend",
       "source": {
         "messageIds": [
-          "msg-6"
+          "msg-4"
         ],
         "quotes": [
-          "Change the guard Position to one slot open."
+          "make a page on the app that you have to sign in to see who signed up for blue panthers"
         ]
       },
       "acceptanceCriteria": [
-        "After upgrade, Guard capacity is persisted as 1.",
-        "After upgrade, Forward and Center capacities remain at 2.",
-        "Existing sign-up data is preserved without loss."
+        "The backend exposes a query that authenticated callers can use to retrieve all sign-up records.",
+        "Unauthenticated (anonymous) callers receive an error or empty result from this query.",
+        "The existing admin-gated query is not broken by any changes."
       ]
     }
   ],
   "constraints": [
-    "Do not change the Forward or Center position capacities — they remain at 2.",
-    "All Motoko logic must remain in the single main actor (backend/main.mo).",
-    "Do not edit any files under frontend/src/hooks/ or frontend/src/components/ui."
+    "Do not modify files under frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, or frontend/src/components/ui.",
+    "All Motoko logic must remain in the single backend/main.mo actor."
   ],
   "nonGoals": [
-    "Changing the maximum capacity of Forward or Center positions.",
-    "Adding new positions or restructuring the position model.",
-    "Resetting or deleting existing sign-up data."
+    "Changing or replacing the existing AdminPage.",
+    "Adding filtering or sorting to the new page (not requested).",
+    "Implementing a new authentication mechanism beyond Internet Identity."
   ],
   "imageRequirements": {
     "required": [],

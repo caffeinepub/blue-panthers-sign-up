@@ -1,16 +1,18 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "Project involves managing positions with configurable open slots.",
-  "architectural_notes": [],
+  "summary": "App for managing Blue Panthers sign-ups, with an admin page requiring authentication to view who has signed up.",
+  "architectural_notes": [
+    "Admin sign-up viewer page is protected behind authentication (sign-in required)"
+  ],
   "known_issues": [],
   "isFixRequest": false,
   "existing_features": [
     {
-      "id": "feature-update-the-herosection-stats-bar-in-herosection-tsx-to-reflect-the-guard-position-s-new-max-capacity-of-1-the-stats-bar-should-display-1-slot-open-singular-for-guard-when-no-one-has-signed-up-and-full-when-the-slot-is-taken-forward-and-center-continue-to-show-2-slots-open-or-full-as-before",
-      "title": "Update the HeroSection stats bar in HeroSection.tsx to reflect the Guard position's new max capacity of 1. The stats bar should display '1 Slot Open' (singular) for Guard when no one has signed up, and 'Full' when the slot is taken. Forward and Center continue to show '2 Slots Open' or 'Full' as before.",
+      "id": "feature-create-a-dedicated-protected-page-e-g-signups-that-displays-the-list-of-all-players-who-have-signed-up-for-blue-panthers-the-page-must-require-the-user-to-be-signed-in-via-internet-identity-before-the-sign-up-list-is-shown-if-the-user-is-not-authenticated-display-a-prompt-to-sign-in-rather-than-the-list",
+      "title": "Create a dedicated protected page (e.g., '/signups') that displays the list of all players who have signed up for Blue Panthers. The page must require the user to be signed in via Internet Identity before the sign-up list is shown. If the user is not authenticated, display a prompt to sign in rather than the list.",
       "reqIds": [
-        "REQ-2"
+        "REQ-1"
       ],
       "version": 1
     }
@@ -18,29 +20,21 @@
   "new_feature_requests": [
     {
       "id": "AR-1",
-      "summary": "Change the Guard position to show 1 open slot",
+      "summary": "Protected admin page requiring sign-in to view Blue Panthers sign-up list",
       "reqIds": [],
       "status": "pending"
     },
     {
-      "id": "AR-2",
-      "summary": "Update the Guard position maximum capacity to 1 in the backend. The sign-up validation logic currently uses a max capacity of 2 for all positions; change the Guard position's max capacity to 1.",
+      "id": "AR-3",
+      "summary": "Expose or reuse the existing backend query that returns all sign-ups so the new protected page can fetch the full list of sign-ups for authenticated callers. Ensure the query is accessible to any authenticated user (not only admins) if that is the intended access level, or confirm it remains admin-gated.",
       "reqIds": [
-        "REQ-1"
-      ],
-      "status": "pending"
-    },
-    {
-      "id": "AR-4",
-      "summary": "Generate a migration module (backend/migration.mo) that sets the Guard position max capacity to 1 and keeps Forward and Center at 2 during canister upgrade.",
-      "reqIds": [
-        "REQ-3"
+        "REQ-2"
       ],
       "status": "pending"
     }
   ],
   "gameProjectType": "none",
-  "projectName": "Change Guard position to 1 open slot",
+  "projectName": "Blue Panthers",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

@@ -2,10 +2,12 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-update-the-herosection-stats-bar-in-herosection-tsx-to-reflect-the-guard-position-s-new-max-capacity-of-1-the-stats-bar-should-display-1-slot-open-singular-for-guard-when-no-one-has-signed-up-and-full-when-the-slot-is-taken-forward-and-center-continue-to-show-2-slots-open-or-full-as-before",
-      "featureTitle": "Update the HeroSection stats bar in HeroSection.tsx to reflect the Guard position's new max capacity of 1. The stats bar should display '1 Slot Open' (singular) for Guard when no one has signed up, and 'Full' when the slot is taken. Forward and Center continue to show '2 Slots Open' or 'Full' as before.",
+      "featureId": "feature-create-a-dedicated-protected-page-e-g-signups-that-displays-the-list-of-all-players-who-have-signed-up-for-blue-panthers-the-page-must-require-the-user-to-be-signed-in-via-internet-identity-before-the-sign-up-list-is-shown-if-the-user-is-not-authenticated-display-a-prompt-to-sign-in-rather-than-the-list",
+      "featureTitle": "Create a dedicated protected page (e.g., '/signups') that displays the list of all players who have signed up for Blue Panthers. The page must require the user to be signed in via Internet Identity before the sign-up list is shown. If the user is not authenticated, display a prompt to sign in rather than the list.",
       "files": [
-        "frontend/src/components/HeroSection.tsx"
+        "frontend/src/App.tsx",
+        "frontend/src/components/Layout.tsx",
+        "frontend/src/pages/SignUpsPage.tsx"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -16,7 +18,7 @@
         "authorization@4.0.0"
       ],
       "testIds": [
-        "REQ-2"
+        "REQ-1"
       ],
       "confidence": "high"
     }

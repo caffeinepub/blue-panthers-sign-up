@@ -1,11 +1,18 @@
 import React from 'react';
 import { MapPin } from 'lucide-react';
+import { Link } from '@tanstack/react-router';
+import { useInternetIdentity } from '../hooks/useInternetIdentity';
+import { useIsCallerAdmin } from '../hooks/useQueries';
 
 interface LayoutProps {
     children: React.ReactNode;
 }
 
 export default function Layout({ children }: LayoutProps) {
+    const { identity } = useInternetIdentity();
+    const isAuthenticated = !!identity;
+    const { data: isAdmin } = useIsCallerAdmin();
+
     return (
         <div className="min-h-screen flex flex-col bg-background">
             <header className="bg-navy-900 border-b border-gold-700/30 sticky top-0 z-50 shadow-lg">
@@ -32,6 +39,20 @@ export default function Layout({ children }: LayoutProps) {
                         >
                             Join the Team
                         </a>
+                        <Link
+                            to="/signups"
+                            className="font-display text-sm font-bold tracking-widest uppercase text-foreground/70 hover:text-gold-400 transition-colors"
+                        >
+                            Sign-Ups
+                        </Link>
+                        {isAuthenticated && isAdmin && (
+                            <Link
+                                to="/admin"
+                                className="font-display text-sm font-bold tracking-widest uppercase text-gold-400 hover:text-gold-300 transition-colors border border-gold-500/40 hover:border-gold-400 px-3 py-1 rounded-sm"
+                            >
+                                Admin
+                            </Link>
+                        )}
                     </nav>
                 </div>
             </header>

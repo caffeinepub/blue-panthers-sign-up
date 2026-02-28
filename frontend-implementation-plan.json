@@ -1,21 +1,33 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Change Guard position to 1 open slot",
+  "title": "Protected sign-up viewer page requiring authentication",
   "requirements": [
     {
-      "id": "REQ-2",
-      "summary": "Update the HeroSection stats bar to reflect the Guard position's new max capacity of 1",
+      "id": "REQ-1",
+      "summary": "Create a protected '/signups' page that displays all Blue Panthers sign-ups, requiring Internet Identity authentication before showing the list",
       "acceptanceCriteria": [
-        "HeroSection displays '1 Slot Open' for Guard when 0 players have signed up for that position.",
-        "HeroSection displays 'Full' for Guard when 1 player has signed up.",
-        "Forward and Center slots continue to display based on a max of 2 slots."
+        "A new route (e.g., '/signups') is registered in App.tsx and accessible via navigation.",
+        "Unauthenticated users see a sign-in prompt instead of the sign-up list.",
+        "Authenticated users see a table of all Blue Panthers sign-up entries fetched from the backend.",
+        "The page includes login and logout controls consistent with the rest of the app's design.",
+        "The page is reachable via a navigation link in the app header or menu."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/HeroSection.tsx",
+          "path": "frontend/src/pages/SignUpsPage.tsx",
+          "operation": "create",
+          "description": "Create a new protected page component that displays all player sign-ups in a styled table. The page must check authentication status using useInternetIdentity and show a sign-in prompt with login button when the user is not authenticated. For authenticated users, fetch and display all sign-ups using the getAllSignUps query from useQueries, showing player details (name, email, phone, age, position, experience level) in a table format consistent with AdminPage and OwnerDashboard styling. Include login/logout controls in the page header. Use the authorization component's authentication patterns to ensure proper access control."
+        },
+        {
+          "path": "frontend/src/App.tsx",
           "operation": "modify",
-          "description": "Update the stats bar logic to use a max capacity of 1 for the Guard position. Modify the slot availability calculation so that Guard displays '1 Slot Open' (singular) when 0 players have signed up and 'Full' when 1 player has signed up. Keep Forward and Center using max capacity of 2, displaying '2 Slots Open' or 'Full' as before. The component currently uses a hardcoded max of 2 for all positions; add position-specific capacity logic."
+          "description": "Register a new route '/signups' in the router configuration that renders the SignUpsPage component within the Layout wrapper, positioned between the existing '/' route and '/owner' route to maintain a logical navigation flow."
+        },
+        {
+          "path": "frontend/src/components/Layout.tsx",
+          "operation": "modify",
+          "description": "Add a navigation link labeled 'Sign-Ups' in the header navigation that points to '/signups', positioned between the home link and the existing conditional 'Admin' link. The new link should be visible to all users (authenticated and unauthenticated) and styled consistently with existing navigation items."
         }
       ]
     }

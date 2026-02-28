@@ -8,9 +8,7 @@ import Principal "mo:core/Principal";
 import Iter "mo:core/Iter";
 import MixinAuthorization "authorization/MixinAuthorization";
 import AccessControl "authorization/access-control";
-import Migration "migration";
 
-(with migration = Migration.run)
 actor {
   let accessControlState = AccessControl.initState();
   include MixinAuthorization(accessControlState);
@@ -144,8 +142,8 @@ actor {
   };
 
   public query ({ caller }) func getAllSignUps() : async [SignUp] {
-    if (not AccessControl.hasPermission(accessControlState, caller, #admin)) {
-      Runtime.trap("Unauthorized: Only admins can view all sign-ups");
+    if (not AccessControl.hasPermission(accessControlState, caller, #user)) {
+      Runtime.trap("Unauthorized: Only users can view all sign-ups");
     };
     signUps.values().toArray().sort();
   };
