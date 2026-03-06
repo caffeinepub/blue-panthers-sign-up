@@ -1,18 +1,24 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "App for managing Blue Panthers sign-ups, with an admin page requiring authentication to view who has signed up.",
-  "architectural_notes": [
-    "Admin sign-up viewer page is protected behind authentication (sign-in required)"
-  ],
+  "summary": "Sports team signup app with a gold ball announcement, tryouts starting June 1st, and team signup functionality with three open slots.",
+  "architectural_notes": [],
   "known_issues": [],
   "isFixRequest": false,
   "existing_features": [
     {
-      "id": "feature-create-a-dedicated-protected-page-e-g-signups-that-displays-the-list-of-all-players-who-have-signed-up-for-blue-panthers-the-page-must-require-the-user-to-be-signed-in-via-internet-identity-before-the-sign-up-list-is-shown-if-the-user-is-not-authenticated-display-a-prompt-to-sign-in-rather-than-the-list",
-      "title": "Create a dedicated protected page (e.g., '/signups') that displays the list of all players who have signed up for Blue Panthers. The page must require the user to be signed in via Internet Identity before the sign-up list is shown. If the user is not authenticated, display a prompt to sign in rather than the list.",
+      "id": "feature-open-the-sign-up-form-on-the-sign-up-page-so-players-can-submit-their-information-the-page-currently-shows-no-positions-left-registration-closed-replace-this-with-a-functional-sign-up-form-that-allows-submissions-as-long-as-slots-remain-available",
+      "title": "Open the sign-up form on the Sign-Up page so players can submit their information. The page currently shows 'No Positions Left' / 'Registration Closed' — replace this with a functional sign-up form that allows submissions as long as slots remain available.",
       "reqIds": [
         "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-set-the-total-team-sign-up-capacity-to-exactly-3-open-slots-once-3-sign-ups-have-been-submitted-the-form-should-lock-and-display-a-team-full-or-no-slots-remaining-message-the-backend-must-enforce-this-3-slot-limit-and-reject-submissions-that-exceed-it",
+      "title": "Set the total team sign-up capacity to exactly 3 open slots. Once 3 sign-ups have been submitted, the form should lock and display a 'Team Full' or 'No Slots Remaining' message. The backend must enforce this 3-slot limit and reject submissions that exceed it.",
+      "reqIds": [
+        "REQ-2"
       ],
       "version": 1
     }
@@ -20,21 +26,13 @@
   "new_feature_requests": [
     {
       "id": "AR-1",
-      "summary": "Protected admin page requiring sign-in to view Blue Panthers sign-up list",
+      "summary": "Add team signup functionality with three open position slots",
       "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-3",
-      "summary": "Expose or reuse the existing backend query that returns all sign-ups so the new protected page can fetch the full list of sign-ups for authenticated callers. Ensure the query is accessible to any authenticated user (not only admins) if that is the intended access level, or confirm it remains admin-gated.",
-      "reqIds": [
-        "REQ-2"
-      ],
       "status": "pending"
     }
   ],
   "gameProjectType": "none",
-  "projectName": "Blue Panthers",
+  "projectName": "Blue Panthers Sign-Up",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

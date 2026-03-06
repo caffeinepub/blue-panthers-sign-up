@@ -1,12 +1,13 @@
 # Specification
 
 ## Summary
-**Goal:** Add a protected `/signups` page that requires Internet Identity authentication to view the list of Blue Panthers sign-ups.
+**Goal:** Enable team sign-ups on the Sign-Up page with exactly 3 available slots, replacing the current locked/closed state with a functional form.
 
 **Planned changes:**
-- Add a new `/signups` route in the frontend that shows a sign-in prompt to unauthenticated users and the full sign-up list to authenticated users.
-- Include login/logout controls on the new page consistent with the existing app design.
-- Add a navigation link to the new page in the app header or menu.
-- Expose a backend query that returns all sign-up records to any authenticated caller, while rejecting anonymous callers.
+- Replace the "No Positions Left" / "Registration Closed" message on the Sign-Up page with a sign-up form (fields: name, position, experience level).
+- Display the number of remaining slots (e.g., "2 slots remaining") on the form.
+- On successful submission, show a confirmation message.
+- Enforce a hard cap of 3 total sign-up slots in the backend; reject any 4th submission with an error.
+- When all 3 slots are filled, replace the form with a "Team Full" notice on the frontend.
 
-**User-visible outcome:** Signed-in users can navigate to a dedicated page and view the full list of players who have signed up for Blue Panthers; users who are not signed in see a prompt to log in instead.
+**User-visible outcome:** Visitors can submit their information to join the Blue Panthers team. The form tracks and displays remaining slots in real time, and automatically locks with a "Team Full" message once all 3 slots are taken.

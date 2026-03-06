@@ -21,8 +21,10 @@ export const ExperienceLevel = IDL.Variant({
 export const Time = IDL.Int;
 export const Position = IDL.Variant({
   'center' : IDL.Null,
-  'guard' : IDL.Null,
-  'forward' : IDL.Null,
+  'smallForward' : IDL.Null,
+  'powerForward' : IDL.Null,
+  'pointGuard' : IDL.Null,
+  'shootingGuard' : IDL.Null,
 });
 export const SignUp = IDL.Record({
   'id' : IDL.Nat,
@@ -73,8 +75,10 @@ export const idlFactory = ({ IDL }) => {
   const Time = IDL.Int;
   const Position = IDL.Variant({
     'center' : IDL.Null,
-    'guard' : IDL.Null,
-    'forward' : IDL.Null,
+    'smallForward' : IDL.Null,
+    'powerForward' : IDL.Null,
+    'pointGuard' : IDL.Null,
+    'shootingGuard' : IDL.Null,
   });
   const SignUp = IDL.Record({
     'id' : IDL.Nat,

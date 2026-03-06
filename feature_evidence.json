@@ -2,12 +2,11 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-create-a-dedicated-protected-page-e-g-signups-that-displays-the-list-of-all-players-who-have-signed-up-for-blue-panthers-the-page-must-require-the-user-to-be-signed-in-via-internet-identity-before-the-sign-up-list-is-shown-if-the-user-is-not-authenticated-display-a-prompt-to-sign-in-rather-than-the-list",
-      "featureTitle": "Create a dedicated protected page (e.g., '/signups') that displays the list of all players who have signed up for Blue Panthers. The page must require the user to be signed in via Internet Identity before the sign-up list is shown. If the user is not authenticated, display a prompt to sign in rather than the list.",
+      "featureId": "feature-open-the-sign-up-form-on-the-sign-up-page-so-players-can-submit-their-information-the-page-currently-shows-no-positions-left-registration-closed-replace-this-with-a-functional-sign-up-form-that-allows-submissions-as-long-as-slots-remain-available",
+      "featureTitle": "Open the sign-up form on the Sign-Up page so players can submit their information. The page currently shows 'No Positions Left' / 'Registration Closed' — replace this with a functional sign-up form that allows submissions as long as slots remain available.",
       "files": [
-        "frontend/src/App.tsx",
-        "frontend/src/components/Layout.tsx",
-        "frontend/src/pages/SignUpsPage.tsx"
+        "frontend/src/hooks/useQueries.ts",
+        "frontend/src/pages/SignUpPage.tsx"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -19,6 +18,25 @@
       ],
       "testIds": [
         "REQ-1"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-set-the-total-team-sign-up-capacity-to-exactly-3-open-slots-once-3-sign-ups-have-been-submitted-the-form-should-lock-and-display-a-team-full-or-no-slots-remaining-message-the-backend-must-enforce-this-3-slot-limit-and-reject-submissions-that-exceed-it",
+      "featureTitle": "Set the total team sign-up capacity to exactly 3 open slots. Once 3 sign-ups have been submitted, the form should lock and display a 'Team Full' or 'No Slots Remaining' message. The backend must enforce this 3-slot limit and reject submissions that exceed it.",
+      "files": [
+        "frontend/src/pages/SignUpPage.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0"
+      ],
+      "testIds": [
+        "REQ-2"
       ],
       "confidence": "high"
     }

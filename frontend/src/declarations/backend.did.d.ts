@@ -14,8 +14,10 @@ export type ExperienceLevel = { 'intermediate' : null } |
   { 'beginner' : null } |
   { 'advanced' : null };
 export type Position = { 'center' : null } |
-  { 'guard' : null } |
-  { 'forward' : null };
+  { 'smallForward' : null } |
+  { 'powerForward' : null } |
+  { 'pointGuard' : null } |
+  { 'shootingGuard' : null };
 export interface SignUp {
   'id' : bigint,
   'age' : bigint,

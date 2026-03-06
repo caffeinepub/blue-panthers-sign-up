@@ -6,9 +6,13 @@ import Order "mo:core/Order";
 import Time "mo:core/Time";
 import Principal "mo:core/Principal";
 import Iter "mo:core/Iter";
+import Migration "migration";
+
 import MixinAuthorization "authorization/MixinAuthorization";
 import AccessControl "authorization/access-control";
 
+// Apply migration on upgrade
+(with migration = Migration.run)
 actor {
   let accessControlState = AccessControl.initState();
   include MixinAuthorization(accessControlState);
@@ -38,8 +42,10 @@ actor {
   };
 
   public type Position = {
-    #guard;
-    #forward;
+    #pointGuard;
+    #shootingGuard;
+    #smallForward;
+    #powerForward;
     #center;
   };
 
@@ -54,11 +60,13 @@ actor {
     #maxCapacity : Nat; // 0 means explicitly closed
   };
 
-  // Corrected configuration with max capacity 1 for guard, 2 for others.
+  // Each position should have exactly 3 slots now
   let positionConfig : [(Position, PositionStatus)] = [
-    (#forward, #maxCapacity(2)),
-    (#center, #maxCapacity(2)),
-    (#guard, #maxCapacity(1)), // Updated max capacity for guard
+    (#pointGuard, #maxCapacity(3)),
+    (#shootingGuard, #maxCapacity(3)),
+    (#smallForward, #maxCapacity(3)),
+    (#powerForward, #maxCapacity(3)),
+    (#center, #maxCapacity(3)),
   ];
 
   public type SignUp = {
@@ -109,6 +117,14 @@ actor {
   };
 
   func validatePositionAvailability(position : Position) {
+    // Calculate total current sign-ups for all positions
+    let totalSignUps = signUps.size();
+
+    // Slot limit logic: Only 3 total sign-ups allowed for any position
+    if (totalSignUps >= 3) {
+      Runtime.trap("No slots remaining! The maximum capacity of 3 for team tryouts has been reached.");
+    };
+
     let status = switch (positionConfig.find(func(p) { p.0 == position })) {
       case (?config) { config.1 };
       case (null) { #open }; // Default to open if not found
@@ -158,3 +174,4 @@ actor {
     };
   };
 };
+

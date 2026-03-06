@@ -1,12 +1,9 @@
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { CheckCircle, Loader2, AlertCircle, User, Mail, Phone, Calendar, Trophy } from 'lucide-react';
-import { Position, ExperienceLevel } from '../backend';
-import { useSubmitSignUp, CENTER_MAX_CAPACITY, FORWARD_MAX_CAPACITY, GUARD_MAX_CAPACITY, type SignUpFormData } from '../hooks/useQueries';
+import { CheckCircle2, Users, AlertCircle, Loader2, ShieldOff } from 'lucide-react';
+import HeroSection from '../components/HeroSection';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
 import {
     Select,
     SelectContent,
@@ -14,413 +11,319 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import HeroSection from '../components/HeroSection';
+import { Position, ExperienceLevel } from '../backend';
+import { useSubmitSignUp, useGetRemainingSlots, TOTAL_TEAM_SLOTS } from '../hooks/useQueries';
+import type { SignUpFormData } from '../hooks/useQueries';
 
-const EXPERIENCE_LEVELS = [
+const POSITION_OPTIONS: { value: Position; label: string }[] = [
+    { value: Position.pointGuard, label: 'Point Guard' },
+    { value: Position.shootingGuard, label: 'Shooting Guard' },
+    { value: Position.smallForward, label: 'Small Forward' },
+    { value: Position.powerForward, label: 'Power Forward' },
+    { value: Position.center, label: 'Center' },
+];
+
+const EXPERIENCE_OPTIONS: { value: ExperienceLevel; label: string }[] = [
     { value: ExperienceLevel.beginner, label: 'Beginner' },
     { value: ExperienceLevel.intermediate, label: 'Intermediate' },
     { value: ExperienceLevel.advanced, label: 'Advanced' },
 ];
 
-interface FormValues {
-    name: string;
-    email: string;
-    phone: string;
-    age: string;
-    position: Position;
-    experienceLevel: ExperienceLevel;
-}
-
-function FieldError({ message }: { message: string }) {
-    return (
-        <p className="text-xs text-destructive font-body flex items-center gap-1 mt-1">
-            <AlertCircle className="h-3 w-3 shrink-0" />
-            {message}
-        </p>
-    );
-}
-
-function SuccessCard({ name, onReset }: { name: string; onReset: () => void }) {
-    return (
-        <div className="text-center py-16 px-4">
-            <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gold-500/20 border-2 border-gold-500/40 mb-6">
-                <CheckCircle className="h-10 w-10 text-gold-400" />
-            </div>
-            <h2 className="font-display text-4xl font-black text-foreground mb-3">
-                YOU'RE <span className="text-gold-400">IN!</span>
-            </h2>
-            <p className="font-body text-muted-foreground text-base max-w-sm mx-auto mb-8">
-                Thanks, <strong className="text-foreground">{name}</strong>! Your application has been received. We'll be in touch soon.
-            </p>
-            <Button
-                onClick={onReset}
-                variant="outline"
-                className="border-gold-500/40 text-gold-400 hover:bg-gold-500/10 font-display font-bold tracking-widest uppercase"
-            >
-                Sign Up Another Player
-            </Button>
-        </div>
-    );
-}
+const EMPTY_FORM: SignUpFormData = {
+    name: '',
+    email: '',
+    phone: '',
+    age: '',
+    position: '' as Position,
+    experienceLevel: '' as ExperienceLevel,
+};
 
 export default function SignUpPage() {
+    const [form, setForm] = useState<SignUpFormData>(EMPTY_FORM);
+    const [submitted, setSubmitted] = useState(false);
+    const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+    const { data: remainingSlots, isLoading: slotsLoading } = useGetRemainingSlots();
     const submitSignUp = useSubmitSignUp();
-    const [isSuccess, setIsSuccess] = useState(false);
-    const [submittedName, setSubmittedName] = useState('');
 
-    // Track position full states based on backend error responses
-    const [centerFull, setCenterFull] = useState(false);
-    const [forwardFull, setForwardFull] = useState(false);
-    const [guardFull, setGuardFull] = useState(false);
+    // remainingSlots === -1 means we couldn't fetch (anonymous), treat as open
+    const slotsKnown = remainingSlots !== undefined && remainingSlots !== -1;
+    const isFull = slotsKnown && remainingSlots === 0;
+    const displaySlots = slotsKnown ? remainingSlots : null;
 
-    const {
-        register,
-        handleSubmit,
-        setValue,
-        watch,
-        formState: { errors },
-        reset,
-    } = useForm<FormValues>({
-        defaultValues: {
-            name: '',
-            email: '',
-            phone: '',
-            age: '',
-            position: undefined,
-            experienceLevel: undefined,
-        },
-    });
-
-    const watchPosition = watch('position');
-    const watchExperience = watch('experienceLevel');
-
-    // Derive a user-friendly error message from backend errors
-    const getSubmitErrorMessage = (): string | null => {
-        if (!submitSignUp.isError) return null;
-        const msg = submitSignUp.error instanceof Error ? submitSignUp.error.message : String(submitSignUp.error);
-        if (msg.toLowerCase().includes('maximum capacity') || msg.toLowerCase().includes('maxcapacity')) {
-            const pos = watchPosition;
-            if (pos === Position.forward) {
-                return `The Forward position is now full (${FORWARD_MAX_CAPACITY}/${FORWARD_MAX_CAPACITY} slots taken). Please check back later.`;
-            }
-            if (pos === Position.guard) {
-                return `The Guard position is now full (${GUARD_MAX_CAPACITY}/${GUARD_MAX_CAPACITY} slot taken). Please check back later.`;
-            }
-            return `The Center position is now full (${CENTER_MAX_CAPACITY}/${CENTER_MAX_CAPACITY} slots taken). Please check back later.`;
-        }
-        if (msg.toLowerCase().includes('closed') || msg.toLowerCase().includes('maxcapacity(0)')) {
-            return 'This position is currently closed for sign-ups.';
-        }
-        return msg;
+    const handleChange = (field: keyof SignUpFormData, value: string) => {
+        setForm((prev) => ({ ...prev, [field]: value }));
+        setErrorMsg(null);
     };
 
-    const onSubmit = async (data: FormValues) => {
-        // Block submission if selected position is full
-        if (data.position === Position.center && centerFull) return;
-        if (data.position === Position.forward && forwardFull) return;
-        if (data.position === Position.guard && guardFull) return;
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setErrorMsg(null);
+
+        if (!form.name.trim()) return setErrorMsg('Please enter your name.');
+        if (!form.email.trim()) return setErrorMsg('Please enter your email.');
+        if (!form.phone.trim()) return setErrorMsg('Please enter your phone number.');
+        const age = parseInt(form.age, 10);
+        if (isNaN(age) || age < 10 || age > 99) return setErrorMsg('Please enter a valid age (10–99).');
+        if (!form.position) return setErrorMsg('Please select a position.');
+        if (!form.experienceLevel) return setErrorMsg('Please select your experience level.');
 
         try {
-            const payload: SignUpFormData = {
-                name: data.name,
-                email: data.email,
-                phone: data.phone,
-                age: data.age,
-                position: data.position,
-                experienceLevel: data.experienceLevel,
-            };
-            await submitSignUp.mutateAsync(payload);
-            setSubmittedName(data.name);
-            setIsSuccess(true);
-            reset();
-        } catch (err) {
+            await submitSignUp.mutateAsync(form);
+            setSubmitted(true);
+            setForm(EMPTY_FORM);
+        } catch (err: unknown) {
             const msg = err instanceof Error ? err.message : String(err);
-            // If backend says a position is at capacity, mark it full in UI
-            if (msg.toLowerCase().includes('maximum capacity') || msg.toLowerCase().includes('maxcapacity')) {
-                if (data.position === Position.forward) setForwardFull(true);
-                else if (data.position === Position.guard) setGuardFull(true);
-                else setCenterFull(true);
+            if (msg.includes('maximum capacity') || msg.includes('No slots remaining')) {
+                setErrorMsg('Sorry, all 3 team slots have been filled. Registration is now closed.');
+            } else {
+                setErrorMsg(msg || 'Something went wrong. Please try again.');
             }
         }
     };
-
-    const handleSignUpAnother = () => {
-        setIsSuccess(false);
-        setSubmittedName('');
-        submitSignUp.reset();
-    };
-
-    const submitErrorMessage = getSubmitErrorMessage();
-
-    // Determine if the currently selected position is full
-    const isSelectedPositionFull =
-        (watchPosition === Position.center && centerFull) ||
-        (watchPosition === Position.forward && forwardFull) ||
-        (watchPosition === Position.guard && guardFull);
 
     return (
         <>
-            <HeroSection centerFull={centerFull} forwardFull={forwardFull} guardFull={guardFull} />
+            <HeroSection />
 
             <section id="signup" className="py-16 px-4">
                 <div className="container mx-auto max-w-2xl">
 
-                    {isSuccess ? (
-                        <SuccessCard name={submittedName} onReset={handleSignUpAnother} />
-                    ) : (
-                        <>
-                            <div className="text-center mb-10">
-                                <h2 className="font-display text-4xl md:text-5xl font-black text-foreground mb-3">
-                                    JOIN THE <span className="text-gold-400">TEAM</span>
+                    {/* Success State */}
+                    {submitted ? (
+                        <div className="flex flex-col items-center text-center gap-6 animate-fade-in-up">
+                            <div className="flex items-center justify-center w-24 h-24 rounded-full bg-navy-800 border-2 border-gold-500/40 shadow-gold">
+                                <CheckCircle2 className="h-12 w-12 text-gold-400" />
+                            </div>
+                            <div>
+                                <h2 className="font-display text-5xl md:text-6xl font-black text-foreground mb-3 leading-none">
+                                    YOU'RE <span className="text-gold-400">IN!</span>
                                 </h2>
-                                <p className="font-body text-muted-foreground text-base max-w-md mx-auto">
-                                    Fill out the form below to register your interest in joining the Blue Panthers NCAA program for the 2026 season.
+                                <p className="font-display text-xl font-bold text-foreground/60 uppercase tracking-widest">
+                                    Sign-up received
                                 </p>
                             </div>
+                            <div className="w-16 h-1 bg-gold-500 rounded-full" />
+                            <div className="w-full max-w-md bg-card border border-border rounded-lg p-6 shadow-gold text-left">
+                                <p className="font-body text-sm text-muted-foreground leading-relaxed">
+                                    Welcome to the Blue Panthers family! Your tryout registration has been received. We'll be in touch with details about practice schedules and next steps. See you on the court! 🏀
+                                </p>
+                            </div>
+                            <Button
+                                variant="outline"
+                                className="border-gold-500/40 text-gold-400 hover:bg-gold-500/10 font-display font-black uppercase tracking-widest"
+                                onClick={() => setSubmitted(false)}
+                            >
+                                Submit Another
+                            </Button>
+                        </div>
+                    ) : isFull ? (
+                        /* Team Full State */
+                        <div className="flex flex-col items-center text-center gap-8 animate-fade-in-up">
+                            <div className="flex items-center justify-center w-24 h-24 rounded-full bg-navy-800 border-2 border-gold-500/40 shadow-gold">
+                                <ShieldOff className="h-12 w-12 text-gold-400" />
+                            </div>
+                            <div>
+                                <h2 className="font-display text-5xl md:text-6xl font-black text-foreground mb-3 leading-none">
+                                    TEAM <span className="text-gold-400">FULL</span>
+                                </h2>
+                                <p className="font-display text-xl font-bold text-foreground/60 uppercase tracking-widest">
+                                    All 3 slots have been filled
+                                </p>
+                            </div>
+                            <div className="w-16 h-1 bg-gold-500 rounded-full" />
+                            <div className="w-full max-w-md bg-card border border-border rounded-lg p-6 shadow-gold text-left">
+                                <p className="font-body text-sm text-muted-foreground leading-relaxed">
+                                    All available tryout slots for the Blue Panthers have been claimed. Thank you to everyone who signed up — we'll see you on the court! Check back next season for new openings.
+                                </p>
+                            </div>
+                            <p className="font-body text-xs text-muted-foreground/50 uppercase tracking-widest">
+                                Check back next season for new openings
+                            </p>
+                        </div>
+                    ) : (
+                        /* Sign-Up Form */
+                        <div className="animate-fade-in-up">
+                            {/* Header */}
+                            <div className="flex flex-col items-center text-center gap-4 mb-10">
+                                <div className="flex items-center justify-center w-20 h-20 rounded-full bg-navy-800 border-2 border-gold-500/40 shadow-gold">
+                                    <Users className="h-10 w-10 text-gold-400" />
+                                </div>
+                                <div>
+                                    <h2 className="font-display text-5xl md:text-6xl font-black text-foreground mb-2 leading-none">
+                                        JOIN THE <span className="text-gold-400">TEAM</span>
+                                    </h2>
+                                    <p className="font-display text-lg font-bold text-foreground/60 uppercase tracking-widest">
+                                        Blue Panthers Tryout Registration
+                                    </p>
+                                </div>
+                                <div className="w-16 h-1 bg-gold-500 rounded-full" />
 
-                            <Card className="bg-card border-border shadow-gold">
-                                <CardHeader className="border-b border-border pb-6">
-                                    <CardTitle className="font-display text-2xl font-black text-foreground tracking-wide">
-                                        PLAYER REGISTRATION
-                                    </CardTitle>
-                                    <CardDescription className="font-body text-muted-foreground">
-                                        All fields are required. We'll be in touch shortly after reviewing your NCAA application.
-                                    </CardDescription>
-                                </CardHeader>
-
-                                <CardContent className="pt-6">
-                                    <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-5">
-
-                                        {/* Full Name */}
-                                        <div className="space-y-1.5">
-                                            <Label htmlFor="name" className="font-display text-sm font-bold tracking-widest uppercase text-foreground/80 flex items-center gap-1.5">
-                                                <User className="h-3.5 w-3.5 text-gold-500" />
-                                                Full Name
-                                            </Label>
-                                            <Input
-                                                id="name"
-                                                placeholder="e.g. Jordan Williams"
-                                                className="bg-secondary border-border focus:border-gold-500 focus:ring-gold-500/30 text-foreground placeholder:text-muted-foreground/50"
-                                                disabled={submitSignUp.isPending}
-                                                {...register('name', {
-                                                    required: 'Full name is required',
-                                                    minLength: { value: 2, message: 'Name must be at least 2 characters' },
-                                                })}
-                                            />
-                                            {errors.name && <FieldError message={errors.name.message!} />}
+                                {/* Slot counter */}
+                                <div className="flex items-center gap-2 mt-1">
+                                    {slotsLoading ? (
+                                        <div className="flex items-center gap-2 bg-navy-800 border border-gold-500/30 rounded-full px-4 py-1.5">
+                                            <Loader2 className="h-3.5 w-3.5 text-gold-400 animate-spin" />
+                                            <span className="font-body text-xs font-semibold text-foreground/50 uppercase tracking-widest">
+                                                Checking slots…
+                                            </span>
                                         </div>
-
-                                        {/* Email */}
-                                        <div className="space-y-1.5">
-                                            <Label htmlFor="email" className="font-display text-sm font-bold tracking-widest uppercase text-foreground/80 flex items-center gap-1.5">
-                                                <Mail className="h-3.5 w-3.5 text-gold-500" />
-                                                Email Address
-                                            </Label>
-                                            <Input
-                                                id="email"
-                                                type="email"
-                                                placeholder="e.g. jordan@example.com"
-                                                className="bg-secondary border-border focus:border-gold-500 focus:ring-gold-500/30 text-foreground placeholder:text-muted-foreground/50"
-                                                disabled={submitSignUp.isPending}
-                                                {...register('email', {
-                                                    required: 'Email address is required',
-                                                    pattern: {
-                                                        value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                                                        message: 'Please enter a valid email address',
-                                                    },
-                                                })}
-                                            />
-                                            {errors.email && <FieldError message={errors.email.message!} />}
+                                    ) : displaySlots !== null ? (
+                                        <div className={`flex items-center gap-2 rounded-full px-4 py-1.5 border ${
+                                            displaySlots <= 1
+                                                ? 'bg-red-950/40 border-red-500/40'
+                                                : 'bg-navy-800 border-gold-500/30'
+                                        }`}>
+                                            <span className={`font-display text-sm font-black uppercase tracking-widest ${
+                                                displaySlots <= 1 ? 'text-red-400' : 'text-gold-400'
+                                            }`}>
+                                                {displaySlots} of {TOTAL_TEAM_SLOTS} slot{displaySlots !== 1 ? 's' : ''} remaining
+                                            </span>
                                         </div>
+                                    ) : (
+                                        <div className="flex items-center gap-2 bg-navy-800 border border-gold-500/30 rounded-full px-4 py-1.5">
+                                            <span className="font-display text-sm font-black text-gold-400 uppercase tracking-widest">
+                                                {TOTAL_TEAM_SLOTS} slots open
+                                            </span>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
 
-                                        {/* Phone */}
+                            {/* Form Card */}
+                            <div className="bg-card border border-border rounded-lg p-6 md:p-8 shadow-gold">
+                                <form onSubmit={handleSubmit} className="space-y-5">
+                                    {/* Name */}
+                                    <div className="space-y-1.5">
+                                        <Label htmlFor="name" className="font-display font-black uppercase tracking-widest text-xs text-foreground/70">
+                                            Full Name <span className="text-gold-400">*</span>
+                                        </Label>
+                                        <Input
+                                            id="name"
+                                            placeholder="e.g. Jordan Smith"
+                                            value={form.name}
+                                            onChange={(e) => handleChange('name', e.target.value)}
+                                            className="bg-background border-border focus:border-gold-500 font-body"
+                                        />
+                                    </div>
+
+                                    {/* Email */}
+                                    <div className="space-y-1.5">
+                                        <Label htmlFor="email" className="font-display font-black uppercase tracking-widest text-xs text-foreground/70">
+                                            Email Address <span className="text-gold-400">*</span>
+                                        </Label>
+                                        <Input
+                                            id="email"
+                                            type="email"
+                                            placeholder="you@example.com"
+                                            value={form.email}
+                                            onChange={(e) => handleChange('email', e.target.value)}
+                                            className="bg-background border-border focus:border-gold-500 font-body"
+                                        />
+                                    </div>
+
+                                    {/* Phone + Age row */}
+                                    <div className="grid grid-cols-2 gap-4">
                                         <div className="space-y-1.5">
-                                            <Label htmlFor="phone" className="font-display text-sm font-bold tracking-widest uppercase text-foreground/80 flex items-center gap-1.5">
-                                                <Phone className="h-3.5 w-3.5 text-gold-500" />
-                                                Phone Number
+                                            <Label htmlFor="phone" className="font-display font-black uppercase tracking-widest text-xs text-foreground/70">
+                                                Phone <span className="text-gold-400">*</span>
                                             </Label>
                                             <Input
                                                 id="phone"
                                                 type="tel"
-                                                placeholder="e.g. (555) 123-4567"
-                                                className="bg-secondary border-border focus:border-gold-500 focus:ring-gold-500/30 text-foreground placeholder:text-muted-foreground/50"
-                                                disabled={submitSignUp.isPending}
-                                                {...register('phone', {
-                                                    required: 'Phone number is required',
-                                                    minLength: { value: 7, message: 'Please enter a valid phone number' },
-                                                })}
+                                                placeholder="(555) 000-0000"
+                                                value={form.phone}
+                                                onChange={(e) => handleChange('phone', e.target.value)}
+                                                className="bg-background border-border focus:border-gold-500 font-body"
                                             />
-                                            {errors.phone && <FieldError message={errors.phone.message!} />}
                                         </div>
-
-                                        {/* Age */}
                                         <div className="space-y-1.5">
-                                            <Label htmlFor="age" className="font-display text-sm font-bold tracking-widest uppercase text-foreground/80 flex items-center gap-1.5">
-                                                <Calendar className="h-3.5 w-3.5 text-gold-500" />
-                                                Age
+                                            <Label htmlFor="age" className="font-display font-black uppercase tracking-widest text-xs text-foreground/70">
+                                                Age <span className="text-gold-400">*</span>
                                             </Label>
                                             <Input
                                                 id="age"
                                                 type="number"
                                                 placeholder="e.g. 22"
-                                                min={14}
-                                                max={40}
-                                                className="bg-secondary border-border focus:border-gold-500 focus:ring-gold-500/30 text-foreground placeholder:text-muted-foreground/50"
-                                                disabled={submitSignUp.isPending}
-                                                {...register('age', {
-                                                    required: 'Age is required',
-                                                    min: { value: 14, message: 'Must be at least 14 years old' },
-                                                    max: { value: 40, message: 'Must be 40 or younger' },
-                                                })}
+                                                min={10}
+                                                max={99}
+                                                value={form.age}
+                                                onChange={(e) => handleChange('age', e.target.value)}
+                                                className="bg-background border-border focus:border-gold-500 font-body"
                                             />
-                                            {errors.age && <FieldError message={errors.age.message!} />}
                                         </div>
+                                    </div>
 
-                                        {/* Position */}
-                                        <div className="space-y-1.5">
-                                            <Label className="font-display text-sm font-bold tracking-widest uppercase text-foreground/80 flex items-center gap-1.5">
-                                                <Trophy className="h-3.5 w-3.5 text-gold-500" />
-                                                Position
-                                            </Label>
-                                            <Select
-                                                value={watchPosition}
-                                                onValueChange={(val) => {
-                                                    // Prevent selecting a full position
-                                                    if (val === Position.forward && forwardFull) return;
-                                                    if (val === Position.center && centerFull) return;
-                                                    if (val === Position.guard && guardFull) return;
-                                                    setValue('position', val as Position, { shouldValidate: true });
-                                                }}
-                                                disabled={submitSignUp.isPending}
-                                            >
-                                                <SelectTrigger className="bg-secondary border-border focus:border-gold-500 text-foreground w-full">
-                                                    <SelectValue placeholder="Select a position" />
-                                                </SelectTrigger>
-                                                <SelectContent className="bg-card border-border">
-                                                    {/* Guard */}
-                                                    <SelectItem
-                                                        value={Position.guard}
-                                                        disabled={guardFull}
-                                                        className={guardFull ? 'opacity-50 cursor-not-allowed' : ''}
-                                                    >
-                                                        <span className="flex items-center gap-2">
-                                                            Guard
-                                                            {guardFull ? (
-                                                                <Badge variant="outline" className="text-[10px] px-1 py-0 border-destructive/40 text-destructive/70 ml-1">
-                                                                    Full
-                                                                </Badge>
-                                                            ) : (
-                                                                <Badge variant="outline" className="text-[10px] px-1 py-0 border-gold-500/40 text-gold-500 ml-1">
-                                                                    {GUARD_MAX_CAPACITY} slot
-                                                                </Badge>
-                                                            )}
-                                                        </span>
-                                                    </SelectItem>
-
-                                                    {/* Forward */}
-                                                    <SelectItem
-                                                        value={Position.forward}
-                                                        disabled={forwardFull}
-                                                        className={forwardFull ? 'opacity-50 cursor-not-allowed' : ''}
-                                                    >
-                                                        <span className="flex items-center gap-2">
-                                                            Forward
-                                                            {forwardFull ? (
-                                                                <Badge variant="outline" className="text-[10px] px-1 py-0 border-destructive/40 text-destructive/70 ml-1">
-                                                                    Full
-                                                                </Badge>
-                                                            ) : (
-                                                                <Badge variant="outline" className="text-[10px] px-1 py-0 border-gold-500/40 text-gold-500 ml-1">
-                                                                    {FORWARD_MAX_CAPACITY} slots
-                                                                </Badge>
-                                                            )}
-                                                        </span>
-                                                    </SelectItem>
-
-                                                    {/* Center */}
-                                                    <SelectItem
-                                                        value={Position.center}
-                                                        disabled={centerFull}
-                                                        className={centerFull ? 'opacity-50 cursor-not-allowed' : ''}
-                                                    >
-                                                        <span className="flex items-center gap-2">
-                                                            Center
-                                                            {centerFull ? (
-                                                                <Badge variant="outline" className="text-[10px] px-1 py-0 border-destructive/40 text-destructive/70 ml-1">
-                                                                    Full
-                                                                </Badge>
-                                                            ) : (
-                                                                <Badge variant="outline" className="text-[10px] px-1 py-0 border-gold-500/40 text-gold-500 ml-1">
-                                                                    {CENTER_MAX_CAPACITY} slots
-                                                                </Badge>
-                                                            )}
-                                                        </span>
-                                                    </SelectItem>
-                                                </SelectContent>
-                                            </Select>
-                                            {errors.position && <FieldError message="Please select a position" />}
-                                            {/* Inline warning if selected position is full */}
-                                            {isSelectedPositionFull && (
-                                                <p className="text-xs text-destructive font-body flex items-center gap-1 mt-1">
-                                                    <AlertCircle className="h-3 w-3 shrink-0" />
-                                                    This position is currently full. Please select another position.
-                                                </p>
-                                            )}
-                                        </div>
-
-                                        {/* Experience Level */}
-                                        <div className="space-y-1.5">
-                                            <Label className="font-display text-sm font-bold tracking-widest uppercase text-foreground/80 flex items-center gap-1.5">
-                                                <Trophy className="h-3.5 w-3.5 text-gold-500" />
-                                                Experience Level
-                                            </Label>
-                                            <Select
-                                                value={watchExperience}
-                                                onValueChange={(val) => setValue('experienceLevel', val as ExperienceLevel, { shouldValidate: true })}
-                                                disabled={submitSignUp.isPending}
-                                            >
-                                                <SelectTrigger className="bg-secondary border-border focus:border-gold-500 text-foreground w-full">
-                                                    <SelectValue placeholder="Select experience level" />
-                                                </SelectTrigger>
-                                                <SelectContent className="bg-card border-border">
-                                                    {EXPERIENCE_LEVELS.map((level) => (
-                                                        <SelectItem key={level.value} value={level.value}>
-                                                            {level.label}
-                                                        </SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
-                                            {errors.experienceLevel && <FieldError message="Please select your experience level" />}
-                                        </div>
-
-                                        {/* Submit Error */}
-                                        {submitErrorMessage && (
-                                            <div className="flex items-start gap-2 p-3 rounded bg-destructive/10 border border-destructive/30">
-                                                <AlertCircle className="h-4 w-4 text-destructive shrink-0 mt-0.5" />
-                                                <p className="font-body text-sm text-destructive">{submitErrorMessage}</p>
-                                            </div>
-                                        )}
-
-                                        {/* Submit Button */}
-                                        <Button
-                                            type="submit"
-                                            disabled={submitSignUp.isPending || isSelectedPositionFull}
-                                            className="w-full bg-gold-500 hover:bg-gold-400 text-navy-900 font-display font-black text-base tracking-widest uppercase py-6 disabled:opacity-50"
+                                    {/* Position */}
+                                    <div className="space-y-1.5">
+                                        <Label className="font-display font-black uppercase tracking-widest text-xs text-foreground/70">
+                                            Position <span className="text-gold-400">*</span>
+                                        </Label>
+                                        <Select
+                                            value={form.position}
+                                            onValueChange={(val) => handleChange('position', val)}
                                         >
-                                            {submitSignUp.isPending ? (
-                                                <>
-                                                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                                                    Submitting...
-                                                </>
-                                            ) : (
-                                                'Submit Application'
-                                            )}
-                                        </Button>
-                                    </form>
-                                </CardContent>
-                            </Card>
-                        </>
+                                            <SelectTrigger className="bg-background border-border focus:border-gold-500 font-body w-full">
+                                                <SelectValue placeholder="Select a position…" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {POSITION_OPTIONS.map((opt) => (
+                                                    <SelectItem key={opt.value} value={opt.value} className="font-body">
+                                                        {opt.label}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+
+                                    {/* Experience Level */}
+                                    <div className="space-y-1.5">
+                                        <Label className="font-display font-black uppercase tracking-widest text-xs text-foreground/70">
+                                            Experience Level <span className="text-gold-400">*</span>
+                                        </Label>
+                                        <Select
+                                            value={form.experienceLevel}
+                                            onValueChange={(val) => handleChange('experienceLevel', val)}
+                                        >
+                                            <SelectTrigger className="bg-background border-border focus:border-gold-500 font-body w-full">
+                                                <SelectValue placeholder="Select experience level…" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {EXPERIENCE_OPTIONS.map((opt) => (
+                                                    <SelectItem key={opt.value} value={opt.value} className="font-body">
+                                                        {opt.label}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+
+                                    {/* Error message */}
+                                    {errorMsg && (
+                                        <div className="flex items-start gap-2 bg-red-950/40 border border-red-500/40 rounded-md px-4 py-3">
+                                            <AlertCircle className="h-4 w-4 text-red-400 flex-shrink-0 mt-0.5" />
+                                            <p className="font-body text-sm text-red-300">{errorMsg}</p>
+                                        </div>
+                                    )}
+
+                                    {/* Submit */}
+                                    <Button
+                                        type="submit"
+                                        disabled={submitSignUp.isPending}
+                                        className="w-full bg-gold-500 hover:bg-gold-400 text-navy-900 font-display font-black uppercase tracking-widest text-base py-6 shadow-gold disabled:opacity-60"
+                                    >
+                                        {submitSignUp.isPending ? (
+                                            <span className="flex items-center gap-2">
+                                                <Loader2 className="h-4 w-4 animate-spin" />
+                                                Submitting…
+                                            </span>
+                                        ) : (
+                                            'Sign Me Up!'
+                                        )}
+                                    </Button>
+                                </form>
+                            </div>
+                        </div>
                     )}
                 </div>
             </section>

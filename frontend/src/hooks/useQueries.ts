@@ -11,9 +11,8 @@ export interface SignUpFormData {
     experienceLevel: ExperienceLevel;
 }
 
-export const CENTER_MAX_CAPACITY = 2;
-export const FORWARD_MAX_CAPACITY = 2;
-export const GUARD_MAX_CAPACITY = 1;
+export const POSITION_MAX_CAPACITY = 3;
+export const TOTAL_TEAM_SLOTS = 3;
 
 export function useSubmitSignUp() {
     const { actor } = useActor();
@@ -39,6 +38,7 @@ export function useSubmitSignUp() {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['signUps'] });
             queryClient.invalidateQueries({ queryKey: ['allSignUps'] });
+            queryClient.invalidateQueries({ queryKey: ['remainingSlots'] });
         },
     });
 }
@@ -51,6 +51,28 @@ export function useGetAllSignUps() {
         queryFn: async () => {
             if (!actor) return [];
             return actor.getAllSignUps();
+        },
+        enabled: !!actor && !actorFetching,
+        retry: false,
+    });
+}
+
+export function useGetRemainingSlots() {
+    const { actor, isFetching: actorFetching } = useActor();
+
+    return useQuery<number>({
+        queryKey: ['remainingSlots'],
+        queryFn: async () => {
+            if (!actor) return TOTAL_TEAM_SLOTS;
+            try {
+                const signUps = await actor.getAllSignUps();
+                const remaining = Math.max(0, TOTAL_TEAM_SLOTS - signUps.length);
+                return remaining;
+            } catch {
+                // If unauthorized (anonymous user), we can't fetch count
+                // Return null to indicate unknown
+                return -1;
+            }
         },
         enabled: !!actor && !actorFetching,
         retry: false,

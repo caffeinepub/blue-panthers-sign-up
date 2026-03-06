@@ -110,8 +110,10 @@ export enum ExperienceLevel {
 }
 export enum Position {
     center = "center",
-    guard = "guard",
-    forward = "forward"
+    smallForward = "smallForward",
+    powerForward = "powerForward",
+    pointGuard = "pointGuard",
+    shootingGuard = "shootingGuard"
 }
 export enum UserRole {
     admin = "admin",
@@ -340,11 +342,15 @@ function from_candid_variant_n7(_uploadFile: (file: ExternalBlob) => Promise<Uin
 function from_candid_variant_n9(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
     center: null;
 } | {
-    guard: null;
+    smallForward: null;
 } | {
-    forward: null;
+    powerForward: null;
+} | {
+    pointGuard: null;
+} | {
+    shootingGuard: null;
 }): Position {
-    return "center" in value ? Position.center : "guard" in value ? Position.guard : "forward" in value ? Position.forward : value;
+    return "center" in value ? Position.center : "smallForward" in value ? Position.smallForward : "powerForward" in value ? Position.powerForward : "pointGuard" in value ? Position.pointGuard : "shootingGuard" in value ? Position.shootingGuard : value;
 }
 function from_candid_vec_n3(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<_SignUp>): Array<SignUp> {
     return value.map((x)=>from_candid_SignUp_n4(_uploadFile, _downloadFile, x));
@@ -361,16 +367,24 @@ function to_candid_UserRole_n1(_uploadFile: (file: ExternalBlob) => Promise<Uint
 function to_candid_variant_n14(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Position): {
     center: null;
 } | {
-    guard: null;
+    smallForward: null;
 } | {
-    forward: null;
+    powerForward: null;
+} | {
+    pointGuard: null;
+} | {
+    shootingGuard: null;
 } {
     return value == Position.center ? {
         center: null
-    } : value == Position.guard ? {
-        guard: null
-    } : value == Position.forward ? {
-        forward: null
+    } : value == Position.smallForward ? {
+        smallForward: null
+    } : value == Position.powerForward ? {
+        powerForward: null
+    } : value == Position.pointGuard ? {
+        pointGuard: null
+    } : value == Position.shootingGuard ? {
+        shootingGuard: null
     } : value;
 }
 function to_candid_variant_n16(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: ExperienceLevel): {

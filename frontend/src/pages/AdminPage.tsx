@@ -15,10 +15,14 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { LogIn, LogOut, Users, Loader2, ShieldAlert, RefreshCw, ShieldCheck } from 'lucide-react';
 
+const POSITION_CAPACITY = 3;
+
 function positionLabel(p: Position): string {
     switch (p) {
-        case Position.guard: return 'Guard';
-        case Position.forward: return 'Forward';
+        case Position.pointGuard: return 'Point Guard';
+        case Position.shootingGuard: return 'Shooting Guard';
+        case Position.smallForward: return 'Small Forward';
+        case Position.powerForward: return 'Power Forward';
         case Position.center: return 'Center';
         default: return String(p);
     }
@@ -44,11 +48,57 @@ function experienceBadgeClass(e: ExperienceLevel): string {
 
 function positionBadgeClass(p: Position): string {
     switch (p) {
-        case Position.guard: return 'bg-navy-700/80 text-gold-300 border-navy-600';
-        case Position.forward: return 'bg-navy-800/80 text-gold-400 border-navy-700';
+        case Position.pointGuard: return 'bg-navy-700/80 text-gold-300 border-navy-600';
+        case Position.shootingGuard: return 'bg-navy-700/60 text-gold-300 border-navy-600';
+        case Position.smallForward: return 'bg-navy-800/80 text-gold-400 border-navy-700';
+        case Position.powerForward: return 'bg-navy-800/60 text-gold-400 border-navy-700';
         case Position.center: return 'bg-navy-900/80 text-gold-500 border-navy-800';
         default: return '';
     }
+}
+
+const ALL_POSITIONS: Position[] = [
+    Position.pointGuard,
+    Position.shootingGuard,
+    Position.smallForward,
+    Position.powerForward,
+    Position.center,
+];
+
+function PositionSummaryCards({ signUps }: { signUps: SignUp[] }) {
+    return (
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-8">
+            {ALL_POSITIONS.map((pos) => {
+                const count = signUps.filter((s) => s.position === pos).length;
+                const isFull = count >= POSITION_CAPACITY;
+                return (
+                    <div
+                        key={pos}
+                        className="bg-navy-800 border border-gold-700/20 rounded-sm p-3 flex flex-col gap-1"
+                    >
+                        <span className="font-display text-xs font-bold tracking-widest uppercase text-gold-400 leading-tight">
+                            {positionLabel(pos)}
+                        </span>
+                        <div className="flex items-end gap-1 mt-1">
+                            <span className="font-display text-2xl font-black text-foreground leading-none">
+                                {count}
+                            </span>
+                            <span className="font-body text-xs text-muted-foreground mb-0.5">
+                                / {POSITION_CAPACITY}
+                            </span>
+                        </div>
+                        <span
+                            className={`font-body text-xs font-bold uppercase tracking-wider mt-0.5 ${
+                                isFull ? 'text-gold-500' : 'text-foreground/40'
+                            }`}
+                        >
+                            {isFull ? 'Full' : 'Open'}
+                        </span>
+                    </div>
+                );
+            })}
+        </div>
+    );
 }
 
 function SignUpsTable({ signUps }: { signUps: SignUp[] }) {
@@ -183,7 +233,7 @@ export default function AdminPage() {
                                 variant="outline"
                                 size="sm"
                                 onClick={handleLogout}
-                                className="border-gold-700/40 text-foreground/70 hover:text-foreground hover:border-gold-500 font-display text-xs tracking-widest uppercase"
+                                className="border-gold-700/40 text-foreground/70 hover:text-foreground hover:border-gold-500/60 font-display text-xs tracking-widest uppercase"
                             >
                                 <LogOut className="h-3.5 w-3.5 mr-1.5" />
                                 Logout
@@ -193,78 +243,77 @@ export default function AdminPage() {
                 </div>
             </div>
 
-            <main className="container mx-auto px-4 py-12 max-w-6xl">
-                {!isAuthenticated ? (
-                    /* Login Gate */
-                    <div className="flex flex-col items-center justify-center py-24 text-center">
-                        <div className="bg-navy-800/60 border border-gold-700/20 rounded-sm p-10 max-w-md w-full shadow-gold">
-                            <ShieldCheck className="h-14 w-14 text-gold-500/60 mx-auto mb-5" />
-                            <h2 className="font-display text-3xl font-black text-foreground tracking-widest mb-3">
-                                ADMIN ACCESS
-                            </h2>
-                            <p className="font-body text-muted-foreground text-sm mb-8 leading-relaxed">
-                                This page is restricted to Blue Panthers admins. Sign in with your identity to view all player sign-ups.
-                            </p>
-                            <Button
-                                onClick={handleLogin}
-                                disabled={isLoggingIn}
-                                className="w-full bg-gold-500 hover:bg-gold-400 text-navy-900 font-display text-sm font-black tracking-widest uppercase py-5 rounded-sm shadow-gold transition-all duration-200 disabled:opacity-60"
-                            >
-                                {isLoggingIn ? (
-                                    <>
-                                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                                        Signing In...
-                                    </>
-                                ) : (
-                                    <>
-                                        <LogIn className="h-4 w-4 mr-2" />
-                                        Sign In
-                                    </>
-                                )}
-                            </Button>
+            <div className="container mx-auto px-4 py-10">
+                {/* Not authenticated */}
+                {!isAuthenticated && (
+                    <div className="flex flex-col items-center justify-center py-24 text-center gap-6">
+                        <div className="flex items-center justify-center w-20 h-20 rounded-full bg-navy-800 border-2 border-gold-500/30">
+                            <ShieldAlert className="h-10 w-10 text-gold-400/60" />
                         </div>
+                        <div>
+                            <h2 className="font-display text-3xl font-black text-foreground tracking-widest mb-2">
+                                ADMIN ACCESS REQUIRED
+                            </h2>
+                            <p className="font-body text-muted-foreground text-sm max-w-xs">
+                                Please log in to access the admin dashboard.
+                            </p>
+                        </div>
+                        <Button
+                            onClick={handleLogin}
+                            disabled={isLoggingIn}
+                            className="bg-gold-500 hover:bg-gold-400 text-navy-900 font-display font-black tracking-widest uppercase px-8"
+                        >
+                            {isLoggingIn ? (
+                                <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Logging in...</>
+                            ) : (
+                                <><LogIn className="h-4 w-4 mr-2" /> Login</>
+                            )}
+                        </Button>
                     </div>
-                ) : isAdminLoading ? (
-                    /* Checking admin status */
-                    <div className="flex flex-col items-center justify-center py-24 text-center">
-                        <Loader2 className="h-10 w-10 text-gold-500/60 animate-spin mb-4" />
-                        <p className="font-display text-sm font-bold tracking-widest uppercase text-foreground/50">
-                            Verifying Access...
-                        </p>
-                    </div>
-                ) : !isAdmin ? (
-                    /* Access Denied */
-                    <div className="flex flex-col items-center justify-center py-24 text-center">
-                        <div className="bg-navy-800/60 border border-destructive/30 rounded-sm p-10 max-w-md w-full">
-                            <ShieldAlert className="h-14 w-14 text-destructive/60 mx-auto mb-5" />
-                            <h2 className="font-display text-3xl font-black text-foreground tracking-widest mb-3">
+                )}
+
+                {/* Authenticated but not admin */}
+                {isAuthenticated && !isAdminLoading && isAdmin === false && (
+                    <div className="flex flex-col items-center justify-center py-24 text-center gap-6">
+                        <div className="flex items-center justify-center w-20 h-20 rounded-full bg-navy-800 border-2 border-gold-500/30">
+                            <ShieldAlert className="h-10 w-10 text-gold-400/60" />
+                        </div>
+                        <div>
+                            <h2 className="font-display text-3xl font-black text-foreground tracking-widest mb-2">
                                 ACCESS DENIED
                             </h2>
-                            <p className="font-body text-muted-foreground text-sm mb-8 leading-relaxed">
-                                Your account does not have admin privileges. Contact the team owner to request access.
+                            <p className="font-body text-muted-foreground text-sm max-w-xs">
+                                You do not have admin privileges to view this page.
                             </p>
-                            <Button
-                                onClick={handleLogout}
-                                variant="outline"
-                                className="border-gold-700/40 text-foreground/70 hover:text-foreground hover:border-gold-500 font-display text-xs tracking-widest uppercase"
-                            >
-                                <LogOut className="h-3.5 w-3.5 mr-1.5" />
-                                Sign Out
-                            </Button>
                         </div>
                     </div>
-                ) : (
-                    /* Admin Dashboard Content */
-                    <div>
-                        {/* Stats bar */}
-                        <div className="flex items-center justify-between mb-8 flex-wrap gap-4">
+                )}
+
+                {/* Admin content */}
+                {isAuthenticated && (isAdminLoading || isAdmin) && (
+                    <>
+                        {/* Admin verified badge */}
+                        {isAdmin && (
+                            <div className="flex items-center gap-2 mb-6">
+                                <ShieldCheck className="h-4 w-4 text-gold-400" />
+                                <span className="font-display text-xs font-bold tracking-widest uppercase text-gold-400">
+                                    Admin Verified
+                                </span>
+                            </div>
+                        )}
+
+                        {/* Position Summary Cards */}
+                        {signUps && <PositionSummaryCards signUps={signUps} />}
+
+                        {/* Table header row */}
+                        <div className="flex items-center justify-between mb-4">
                             <div>
-                                <h1 className="font-display text-3xl md:text-4xl font-black text-foreground tracking-widest">
-                                    PLAYER <span className="text-gold-400">SIGN-UPS</span>
-                                </h1>
-                                {!isLoading && !isError && (
-                                    <p className="font-body text-muted-foreground text-sm mt-1">
-                                        {signUps?.length ?? 0} registration{(signUps?.length ?? 0) !== 1 ? 's' : ''} received
+                                <h2 className="font-display text-2xl font-black text-foreground tracking-widest uppercase leading-none">
+                                    All Sign-Ups
+                                </h2>
+                                {signUps && (
+                                    <p className="font-body text-xs text-muted-foreground mt-1">
+                                        {signUps.length} player{signUps.length !== 1 ? 's' : ''} registered · {POSITION_CAPACITY} slots per position
                                     </p>
                                 )}
                             </div>
@@ -273,79 +322,34 @@ export default function AdminPage() {
                                 size="sm"
                                 onClick={() => refetch()}
                                 disabled={isFetching}
-                                className="border-gold-700/40 text-foreground/70 hover:text-foreground hover:border-gold-500 font-display text-xs tracking-widest uppercase"
+                                className="border-gold-700/40 text-foreground/70 hover:text-foreground hover:border-gold-500/60 font-display text-xs tracking-widest uppercase"
                             >
                                 {isFetching ? (
-                                    <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />
+                                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
                                 ) : (
-                                    <RefreshCw className="h-3.5 w-3.5 mr-1.5" />
+                                    <RefreshCw className="h-3.5 w-3.5" />
                                 )}
-                                Refresh
+                                <span className="ml-1.5">Refresh</span>
                             </Button>
                         </div>
 
-                        {/* Position summary cards */}
-                        {!isLoading && !isError && signUps && signUps.length > 0 && (
-                            <div className="grid grid-cols-3 gap-4 mb-8">
-                                {[Position.guard, Position.forward, Position.center].map((pos) => {
-                                    const count = signUps.filter(s => s.position === pos).length;
-                                    return (
-                                        <div
-                                            key={pos}
-                                            className="bg-navy-800/60 border border-gold-700/20 rounded-sm p-4 text-center"
-                                        >
-                                            <p className="font-display text-2xl font-black text-gold-400">{count}</p>
-                                            <p className="font-display text-xs font-bold tracking-widest uppercase text-foreground/60 mt-1">
-                                                {positionLabel(pos)}
-                                            </p>
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        )}
-
                         {/* Error state */}
                         {isError && (
-                            <div className="flex items-start gap-3 bg-destructive/10 border border-destructive/30 rounded-sm p-4 mb-6">
-                                <ShieldAlert className="h-5 w-5 text-destructive mt-0.5 shrink-0" />
-                                <div>
-                                    <p className="font-display text-sm font-bold tracking-wide text-destructive uppercase mb-1">
-                                        Error Loading Data
-                                    </p>
-                                    <p className="font-body text-sm text-destructive/80">
-                                        {error instanceof Error
-                                            ? error.message
-                                            : 'Unable to load sign-ups. Please try refreshing.'}
-                                    </p>
-                                </div>
+                            <div className="flex items-center gap-3 bg-destructive/10 border border-destructive/30 rounded-sm px-4 py-3 mb-4">
+                                <ShieldAlert className="h-4 w-4 text-destructive flex-shrink-0" />
+                                <p className="font-body text-sm text-destructive">
+                                    {(error as Error)?.message?.includes('Unauthorized')
+                                        ? 'You are not authorized to view sign-ups.'
+                                        : 'Failed to load sign-ups. Please try refreshing.'}
+                                </p>
                             </div>
                         )}
 
-                        {/* Loading state */}
-                        {isLoading && <TableSkeleton />}
-
-                        {/* Data table */}
-                        {!isLoading && !isError && signUps && (
-                            <SignUpsTable signUps={signUps} />
-                        )}
-                    </div>
+                        {/* Loading / Table */}
+                        {isLoading ? <TableSkeleton /> : signUps ? <SignUpsTable signUps={signUps} /> : null}
+                    </>
                 )}
-            </main>
-
-            {/* Footer */}
-            <footer className="bg-navy-900 border-t border-gold-700/20 py-6 mt-16">
-                <div className="container mx-auto px-4 text-center">
-                    <p className="text-muted-foreground/60 text-xs">
-                        © {new Date().getFullYear()} Blue Panthers Basketball Club ·{' '}
-                        <a
-                            href="/"
-                            className="text-gold-500/60 hover:text-gold-400 transition-colors"
-                        >
-                            Back to Sign-Up Page
-                        </a>
-                    </p>
-                </div>
-            </footer>
+            </div>
         </div>
     );
 }

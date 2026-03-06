@@ -28,8 +28,10 @@ export enum ExperienceLevel {
 }
 export enum Position {
     center = "center",
-    guard = "guard",
-    forward = "forward"
+    smallForward = "smallForward",
+    powerForward = "powerForward",
+    pointGuard = "pointGuard",
+    shootingGuard = "shootingGuard"
 }
 export enum UserRole {
     admin = "admin",

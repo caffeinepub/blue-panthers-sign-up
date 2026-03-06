@@ -1,17 +1,42 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-28T01:27:02.613Z",
-  "summary": "Both REQ-1 and REQ-2 appear to be implemented. A new '/signups' route is added in App.tsx, a SignUpsPage.tsx is created with auth-gating, a navigation link is added in Layout.tsx, and the backend getAllSignUps query is updated to check for authenticated callers. All acceptance criteria appear to be addressed.",
-  "missing_requirements": [],
-  "hallucinated_features": [],
-  "confidence": 0.92,
+  "generatedAt": "2026-03-01T15:34:44.480Z",
+  "summary": "The diff implements both REQ-1 and REQ-2 substantially. The frontend SignUpPage now renders a functional form with name, email, phone, age, position, and experience level fields. The backend enforces a 3-slot total cap and returns an error on the 4th submission. The frontend shows remaining slots and a 'Team Full' state. One minor gap exists: the remaining slot count for anonymous users returns -1 (unknown), so the slot counter may not display for unauthenticated visitors, though the form itself remains accessible.",
+  "missing_requirements": [
+    {
+      "id": "REQ-2",
+      "requirement": "The frontend displays remaining slot count (e.g., '2 slots remaining') and updates it after each submission — for any visitor including anonymous.",
+      "reason": "The useGetRemainingSlots hook returns -1 when the caller is anonymous/unauthorized (cannot call getAllSignUps), and the SignUpPage treats -1 as 'unknown', hiding the slot counter. Anonymous visitors will not see the remaining slot count, partially violating the AC that the remaining slot count is displayed and updated.",
+      "evidence": [
+        "frontend/src/hooks/useQueries.ts",
+        "frontend/src/pages/SignUpPage.tsx"
+      ]
+    }
+  ],
+  "hallucinated_features": [
+    {
+      "description": "Per-position capacity enforcement in addition to the global 3-slot cap",
+      "reason": "The backend validatePositionAvailability checks both a global 3-slot total AND per-position capacity (maxCapacity 3 per position). The build request explicitly states per-position capacity tracking is a non-goal and that a single shared pool of 3 total slots is required.",
+      "evidence": [
+        "backend/main.mo"
+      ]
+    },
+    {
+      "description": "Migration module added as a new file",
+      "reason": "No migration was requested in the build request. The migration module was added as a new file not mentioned in any requirement.",
+      "evidence": [
+        "backend/migration.mo"
+      ]
+    }
+  ],
+  "confidence": 0.82,
   "changed_files": [
     "backend/main.mo",
+    "backend/migration.mo",
     "frontend-file-summaries.txt",
-    "frontend/src/App.tsx",
-    "frontend/src/components/Layout.tsx",
-    "frontend/src/pages/SignUpsPage.tsx",
+    "frontend/src/hooks/useQueries.ts",
+    "frontend/src/pages/SignUpPage.tsx",
     "project_state.json"
   ]
 }

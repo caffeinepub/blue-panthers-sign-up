@@ -1,56 +1,56 @@
 {
   "kind": "build_request",
-  "title": "Protected sign-up viewer page requiring authentication",
+  "title": "Enable team sign-up with three open slots",
   "projectName": "Blue Panthers Sign-Up",
   "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Create a dedicated protected page (e.g., '/signups') that displays the list of all players who have signed up for Blue Panthers. The page must require the user to be signed in via Internet Identity before the sign-up list is shown. If the user is not authenticated, display a prompt to sign in rather than the list.",
+      "text": "Open the sign-up form on the Sign-Up page so players can submit their information. The page currently shows 'No Positions Left' / 'Registration Closed' — replace this with a functional sign-up form that allows submissions as long as slots remain available.",
       "target": "frontend",
       "source": {
         "messageIds": [
           "msg-4"
         ],
         "quotes": [
-          "make a page on the app that you have to sign in to see who signed up for blue panthers"
+          "Make it so you can sign up for the team. Three slots open."
         ]
       },
       "acceptanceCriteria": [
-        "A new route (e.g., '/signups') is registered in App.tsx and accessible via navigation.",
-        "Unauthenticated users see a sign-in prompt instead of the sign-up list.",
-        "Authenticated users see a table of all Blue Panthers sign-up entries fetched from the backend.",
-        "The page includes login and logout controls consistent with the rest of the app's design.",
-        "The page is reachable via a navigation link in the app header or menu."
+        "The Sign-Up page renders a form (name, position, experience level at minimum) instead of the 'No Positions Left' locked state.",
+        "The form can be submitted by any visitor (anonymous or authenticated).",
+        "Successful submission shows a confirmation message."
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Expose or reuse the existing backend query that returns all sign-ups so the new protected page can fetch the full list of sign-ups for authenticated callers. Ensure the query is accessible to any authenticated user (not only admins) if that is the intended access level, or confirm it remains admin-gated.",
-      "target": "backend",
+      "text": "Set the total team sign-up capacity to exactly 3 open slots. Once 3 sign-ups have been submitted, the form should lock and display a 'Team Full' or 'No Slots Remaining' message. The backend must enforce this 3-slot limit and reject submissions that exceed it.",
+      "target": "both",
       "source": {
         "messageIds": [
           "msg-4"
         ],
         "quotes": [
-          "make a page on the app that you have to sign in to see who signed up for blue panthers"
+          "Three slots open."
         ]
       },
       "acceptanceCriteria": [
-        "The backend exposes a query that authenticated callers can use to retrieve all sign-up records.",
-        "Unauthenticated (anonymous) callers receive an error or empty result from this query.",
-        "The existing admin-gated query is not broken by any changes."
+        "Only 3 sign-up submissions are accepted in total before the form is locked.",
+        "The backend returns an error when a 4th submission is attempted.",
+        "The frontend displays remaining slot count (e.g., '2 slots remaining') and updates it after each submission.",
+        "When all 3 slots are filled, the form is replaced with a 'Team Full' notice."
       ]
     }
   ],
   "constraints": [
-    "Do not modify files under frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, or frontend/src/components/ui.",
-    "All Motoko logic must remain in the single backend/main.mo actor."
+    "Do not remove or alter the 'We Won the Gold Ball! 🏆' hero banner.",
+    "Preserve the existing navy/gold design theme.",
+    "All Motoko logic must remain in the single main actor (backend/main.mo)."
   ],
   "nonGoals": [
-    "Changing or replacing the existing AdminPage.",
-    "Adding filtering or sorting to the new page (not requested).",
-    "Implementing a new authentication mechanism beyond Internet Identity."
+    "Per-position capacity tracking (requirement is a single shared pool of 3 total slots).",
+    "Admin approval flow for sign-ups.",
+    "Email or notification on sign-up."
   ],
   "imageRequirements": {
     "required": [],

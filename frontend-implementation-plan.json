@@ -1,33 +1,43 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Protected sign-up viewer page requiring authentication",
+  "title": "Enable team sign-up with three open slots",
   "requirements": [
     {
       "id": "REQ-1",
-      "summary": "Create a protected '/signups' page that displays all Blue Panthers sign-ups, requiring Internet Identity authentication before showing the list",
+      "summary": "Replace the locked 'Registration Closed' state with a functional sign-up form that accepts submissions",
       "acceptanceCriteria": [
-        "A new route (e.g., '/signups') is registered in App.tsx and accessible via navigation.",
-        "Unauthenticated users see a sign-in prompt instead of the sign-up list.",
-        "Authenticated users see a table of all Blue Panthers sign-up entries fetched from the backend.",
-        "The page includes login and logout controls consistent with the rest of the app's design.",
-        "The page is reachable via a navigation link in the app header or menu."
+        "The Sign-Up page renders a form (name, position, experience level at minimum) instead of the 'No Positions Left' locked state.",
+        "The form can be submitted by any visitor (anonymous or authenticated).",
+        "Successful submission shows a confirmation message."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/pages/SignUpsPage.tsx",
-          "operation": "create",
-          "description": "Create a new protected page component that displays all player sign-ups in a styled table. The page must check authentication status using useInternetIdentity and show a sign-in prompt with login button when the user is not authenticated. For authenticated users, fetch and display all sign-ups using the getAllSignUps query from useQueries, showing player details (name, email, phone, age, position, experience level) in a table format consistent with AdminPage and OwnerDashboard styling. Include login/logout controls in the page header. Use the authorization component's authentication patterns to ensure proper access control."
+          "path": "frontend/src/pages/SignUpPage.tsx",
+          "operation": "modify",
+          "description": "Replace the static 'No Positions Left' locked state with a functional sign-up form. The form must collect name, email, phone, age, position (select dropdown using Position enum), and experience level (select dropdown using ExperienceLevel enum). Wire the form submission to the submitSignUp backend capability via the useSubmitSignUp hook from useQueries.ts. Display a success confirmation message after submission and handle errors gracefully. Keep the HeroSection component intact per the constraints. Use shadcn/ui form components (Button, Input, Select) for consistent styling with the navy/gold theme."
         },
         {
-          "path": "frontend/src/App.tsx",
+          "path": "frontend/src/hooks/useQueries.ts",
           "operation": "modify",
-          "description": "Register a new route '/signups' in the router configuration that renders the SignUpsPage component within the Layout wrapper, positioned between the existing '/' route and '/owner' route to maintain a logical navigation flow."
-        },
+          "description": "Add a useGetRemainingSlots hook that fetches all sign-ups via getAllSignUps and calculates remaining slots as (3 - total count). Return the remaining count and loading state. This hook will be used to display slot availability on the sign-up form and determine when to lock the form."
+        }
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "summary": "Enforce a 3-slot team capacity limit with real-time slot tracking and automatic form lock when full",
+      "acceptanceCriteria": [
+        "Only 3 sign-up submissions are accepted in total before the form is locked.",
+        "The backend returns an error when a 4th submission is attempted.",
+        "The frontend displays remaining slot count (e.g., '2 slots remaining') and updates it after each submission.",
+        "When all 3 slots are filled, the form is replaced with a 'Team Full' notice."
+      ],
+      "file_operations": [
         {
-          "path": "frontend/src/components/Layout.tsx",
+          "path": "frontend/src/pages/SignUpPage.tsx",
           "operation": "modify",
-          "description": "Add a navigation link labeled 'Sign-Ups' in the header navigation that points to '/signups', positioned between the home link and the existing conditional 'Admin' link. The new link should be visible to all users (authenticated and unauthenticated) and styled consistently with existing navigation items."
+          "description": "Use the useGetRemainingSlots hook to fetch and display remaining slot count above the form (e.g., '2 slots remaining'). Conditionally render the form only when slots remain (remainingSlots > 0). When remainingSlots equals 0, replace the form with a 'Team Full' or 'No Slots Remaining' message styled consistently with the existing locked state UI. After successful form submission, invalidate the sign-ups query to refresh the slot count immediately. Handle backend errors (e.g., capacity exceeded) and display them to the user."
         }
       ]
     }

@@ -17,8 +17,10 @@ import { LogIn, LogOut, Users, Loader2, ShieldAlert, RefreshCw } from 'lucide-re
 
 function positionLabel(p: Position): string {
     switch (p) {
-        case Position.guard: return 'Guard';
-        case Position.forward: return 'Forward';
+        case Position.pointGuard: return 'Point Guard';
+        case Position.shootingGuard: return 'Shooting Guard';
+        case Position.smallForward: return 'Small Forward';
+        case Position.powerForward: return 'Power Forward';
         case Position.center: return 'Center';
         default: return String(p);
     }
